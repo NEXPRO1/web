@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Modal Content</title>
+    <!-- Font Awesome (si se decide mantener por otros iconos, sino se puede quitar) -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" /> -->
+    <!-- El CSS específico del modal se enlazará en el index.html principal -->
+</head>
+<body>
+    <!-- El h2 original ("Weekly Coding Challenge...") se omite ya que esto es contenido de modal -->
+    <div class="container" id="modal-auth-container"> <!-- ID cambiado para evitar conflicto con 'container' global del script de animación -->
+        <button type="button" class="close-modal-btn" id="close-auth-modal-btn" 
+                aria-label="Close authentication window" 
+                title="Close"
+                data-i18n-key-aria-label="aria_label_close_auth_modal"
+                data-i18n-key-title="title_close_button"
+                >&times;</button>
+        <div class="form-container sign-up-container">
+            <form action="#" id="modal-register-form"> <!-- ID añadido -->
+                <h1>Create Account</h1>
+                <span>or use your email for registration</span>
+                <input type="text" placeholder="Name" id="modal-register-name" required autocomplete="name" /> <!-- ID añadido -->
+                <input type="email" placeholder="Email" id="modal-register-email" required autocomplete="email" /> <!-- ID añadido -->
+                <input type="password" placeholder="Password" id="modal-register-password" required autocomplete="new-password" /> <!-- ID añadido -->
+                <button type="submit">Sign Up</button> <!-- El type="submit" es importante -->
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#" id="modal-login-form"> <!-- ID añadido -->
+                <h1>Sign in</h1>
+                <span>or use your account</span>
+                <input type="email" placeholder="Email" id="modal-login-email" required autocomplete="email" /> <!-- ID añadido -->
+                <input type="password" placeholder="Password" id="modal-login-password" required autocomplete="current-password" /> <!-- ID añadido -->
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button> <!-- El type="submit" es importante -->
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="modalSignIn">Sign In</button> <!-- ID cambiado -->
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="modalSignUp">Sign Up</button> <!-- ID cambiado -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- El script de animación se manejará en login-modal.js y se activará desde main.js o ui.js -->
+</body>
+</html>

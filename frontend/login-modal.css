@@ -1,0 +1,261 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+/* Prefijo para encapsular los estilos del modal: #auth-modal-container (este será el div que cargue el contenido) */
+
+#auth-modal-container * { /* Aplicar box-sizing a todo dentro del modal */
+	box-sizing: border-box;
+}
+
+/* Estilos base del modal */
+#auth-modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; 
+}
+
+/* Contenedor interno opcional, no usado por login-modal.html directamente pero puede ser útil */
+#auth-modal-container .modal-content-inner { 
+    padding: 20px; 
+    border-radius: 10px;
+}
+
+/* Estilos para el .container DEL MODAL (el div con clase 'container' en login-modal.html) */
+#auth-modal-container .container { 
+    background-color: #fff; 
+    border-radius: 10px; 
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22); 
+    position: relative; 
+    overflow: hidden; 
+    width: 768px; 
+    max-width: 100%; 
+    min-height: 480px; 
+    display: block; /* Para que no herede flexbox del wrapper y se comporte como bloque */
+}
+
+/* Estilos generales para elementos DENTRO del modal */
+#auth-modal-container h1 {
+    font-weight: bold;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#auth-modal-container p {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    margin: 20px 0 30px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#auth-modal-container span {
+    font-size: 12px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#auth-modal-container a {
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+    margin: 15px 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#auth-modal-container button {
+    border-radius: 20px;
+    border: 1px solid #FF4B2B;
+    background-color: #FF4B2B;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer; /* Added for better UX */
+}
+
+#auth-modal-container button:active {
+    transform: scale(0.95);
+}
+
+#auth-modal-container button:focus {
+    outline: none;
+}
+
+#auth-modal-container button.ghost {
+    background-color: transparent;
+    border-color: #FFFFFF;
+}
+
+#auth-modal-container form {
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 50px;
+    height: 100%;
+    text-align: center;
+}
+
+#auth-modal-container input {
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Estilos de la animación y estructura del modal */
+#auth-modal-container .form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+#auth-modal-container .sign-in-container {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+#auth-modal-container .container.right-panel-active .sign-in-container {
+    transform: translateX(100%);
+}
+
+#auth-modal-container .sign-up-container {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+#auth-modal-container .container.right-panel-active .sign-up-container {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: show 0.6s; /* 'show' animation name is global */
+}
+
+/* Keyframes are global, they are not prefixed by selectors. */
+@keyframes show {
+    0%, 49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+#auth-modal-container .overlay-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
+}
+
+#auth-modal-container .container.right-panel-active .overlay-container{
+    transform: translateX(-100%);
+}
+
+#auth-modal-container .overlay {
+    background: #FF416C;
+    background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
+    background: linear-gradient(to right, #FF4B2B, #FF416C);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 0;
+    color: #FFFFFF;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+#auth-modal-container .container.right-panel-active .overlay {
+    transform: translateX(50%);
+}
+
+#auth-modal-container .overlay-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+#auth-modal-container .overlay-left {
+    transform: translateX(-20%);
+}
+
+#auth-modal-container .container.right-panel-active .overlay-left {
+    transform: translateX(0);
+}
+
+#auth-modal-container .overlay-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+#auth-modal-container .container.right-panel-active .overlay-right {
+    transform: translateX(20%);
+}
+/* Social container styles were omitted as HTML elements were removed */
+
+/* Estilos para el botón de cerrar 'X' del modal */
+#auth-modal-container .close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 2rem; /* Un poco más grande para que sea fácil de clickear */
+    font-weight: bold;
+    color: #aaa; /* Un gris claro, visible sobre fondos oscuros y claros del modal */
+    cursor: pointer;
+    line-height: 1;
+    padding: 5px; /* Pequeño padding para área de clic */
+    z-index: 1080; /* Asegurar que esté por encima del contenido del overlay del modal */
+    text-shadow: 0 1px 0 #fff; /* Sutil sombra para legibilidad si el fondo es complejo, opcional */
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+#auth-modal-container .close-modal-btn:hover {
+    color: #777; /* Más oscuro al pasar el cursor */
+    opacity: 1;
+}
+
+body.light-theme #auth-modal-container .close-modal-btn {
+    color: #999; /* Un poco más oscuro para fondo claro si #aaa es muy claro */
+    text-shadow: none; /* Puede que no se necesite sombra en tema claro */
+}
+body.light-theme #auth-modal-container .close-modal-btn:hover {
+    color: #555;
+}
