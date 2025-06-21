@@ -115,5 +115,7 @@
     "text_button_deleted_success": "Button deleted successfully.",
     "error_loading_floating_buttons": "Could not load special buttons.",
     "aria_label_close_auth_modal": "Close authentication window",
-    "title_close_button": "Close"
+    "title_close_button": "Close",
+    "dropdown_avatar_notifications": "Notifications",
+    "title_toggle_menu": "Toggle Menu"
 }
