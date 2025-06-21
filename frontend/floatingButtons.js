@@ -43,7 +43,7 @@ window.FloatingButtons = {
                     buttonElement.title = buttonData.tooltip_text;
                 }
 
-                buttonElement.style.backgroundImage = `url('${buttonData.button_image_url}')`;
+                buttonElement.style.backgroundImage = `url('${buttonData.button_image_url}')`; 
                 
                 buttonElement.addEventListener('click', this.handleButtonClick.bind(this));
 
@@ -71,63 +71,54 @@ window.FloatingButtons = {
     },
     
     positionButtons: function() {
-        if (!this.container || !this.imageContainer) {
-            console.warn('Cannot position buttons: container or imageContainer not found/initialized.');
-            return;
-        }
+       if (!this.container || !this.imageContainer) return;
 
-        const buttons = this.container.querySelectorAll('.floating-button');
-        if (buttons.length === 0) {
-            // console.log('No buttons to position.'); // Not necessarily an error, can be logged if needed during dev
-            return;
-        }
+       const buttons = this.container.querySelectorAll('.floating-button');
+       if (buttons.length === 0) return;
 
-        const containerWidth = this.imageContainer.offsetWidth;
-        const containerHeight = this.imageContainer.offsetHeight;
-        
-        if (containerWidth === 0 || containerHeight === 0) {
-            console.warn('Image container has no dimensions. Cannot position floating buttons yet. Retrying in 100ms.');
-            // Retry once after a short delay, maybe image wasn't fully loaded/displayed
-            // Clear any existing timeout to avoid multiple retries stacking up if called rapidly
-            if (this.positionRetryTimeout) clearTimeout(this.positionRetryTimeout);
-            this.positionRetryTimeout = setTimeout(() => this.positionButtons(), 100);
-            return;
-        }
-        if (this.positionRetryTimeout) clearTimeout(this.positionRetryTimeout); // Clear retry if successful
+       const containerWidth = this.imageContainer.offsetWidth;
+       const containerHeight = this.imageContainer.offsetHeight;
 
-        const centerX = containerWidth / 2;
-        const centerY = containerHeight / 2;
-        
-        // Radius: 80% of the semi-minor axis for an elliptical distribution within the image.
-        // Or a fixed value. For now, let's use a percentage of the container.
-        let radiusX = centerX * 0.80; 
-        let radiusY = centerY * 0.80;
+       // Obtén el tamaño real del botón (ya adaptado por CSS/media query)
+       let sampleButton = buttons[0];
+       let actualButtonSize = sampleButton.offsetWidth;
 
-        const totalButtons = buttons.length;
+       let effectivePadding;
+       // actualButtonSize es leído de buttons[0].offsetWidth.
+       // El CSS define width: 44px para containerWidth <= 600px, y 100px para > 600px.
+       if (actualButtonSize <= 44) { // Aproximadamente containerWidth <= 600px
+           effectivePadding = -10;
+       } else if (containerWidth <= 1023) { // Pantallas medianas (donde actualButtonSize es 100px)
+           effectivePadding = -75;
+       } else { // Pantallas grandes (donde actualButtonSize es 100px)
+           effectivePadding = -65;
+       }
+       
+       const centerX = containerWidth / 2;
+       const centerY = containerHeight / 2;
+       
+       // Calcula el radio para que los botones nunca se salgan
+       let radiusX = (containerWidth / 2) - (actualButtonSize / 2) - effectivePadding;
+       let radiusY = (containerHeight / 2) - (actualButtonSize / 2) - effectivePadding;
 
-        buttons.forEach((button, index) => {
-            const angle = (index / totalButtons) * 2 * Math.PI; // Angle in radians
+       if (radiusX < 0) radiusX = 0;
+       if (radiusY < 0) radiusY = 0;
 
-            const x = centerX + radiusX * Math.cos(angle);
-            const y = centerY + radiusY * Math.sin(angle);
+       const totalButtons = buttons.length;
 
-            // Ensure button has dimensions. If not, log and skip (or use default like 80x80)
-            let buttonWidth = button.offsetWidth;
-            let buttonHeight = button.offsetHeight;
+       buttons.forEach((button, index) => {
+           // Usa el tamaño real del botón
+           button.style.width = actualButtonSize + 'px';
+           button.style.height = actualButtonSize + 'px';
 
-            if(buttonWidth === 0 || buttonHeight === 0) {
-                // Fallback if offsetWidth/Height is 0 (e.g. display:none, though CSS is position:absolute)
-                // This might happen if called too early or CSS issues.
-                // Let's assume 80px as per CSS if not available.
-                // console.warn(`Button ${button.id} has no dimensions, using default 80px for positioning.`);
-                buttonWidth = 80; 
-                buttonHeight = 80;
-            }
+           // Distribución circular
+           const angle = (index / totalButtons) * 2 * Math.PI;
+           const x = centerX + radiusX * Math.cos(angle);
+           const y = centerY + radiusY * Math.sin(angle);
 
-            button.style.left = (x - buttonWidth / 2) + 'px';
-            button.style.top = (y - buttonHeight / 2) + 'px';
-        });
-        // console.log(`${totalButtons} floating buttons positioned.`); // Can be too verbose for resize
+           button.style.left = (x - actualButtonSize / 2) + 'px';
+           button.style.top = (y - actualButtonSize / 2) + 'px';
+       });
     },
 
     handleButtonClick: function(event) {
