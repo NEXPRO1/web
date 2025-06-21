@@ -114,5 +114,7 @@
     "text_deleting": "Eliminando...",
     "text_button_deleted_success": "Botón eliminado con éxito.",
     "aria_label_close_auth_modal": "Cerrar ventana de autenticación",
-    "title_close_button": "Cerrar"
+    "title_close_button": "Cerrar",
+    "dropdown_avatar_notifications": "Notificaciones",
+    "title_toggle_menu": "Alternar Menú"
 }
