@@ -1,6 +1,6 @@
 // frontend/i18n.js
 /*jshint esversion: 6 */ 
-console.log('DEBUG: i18n.js VERSION 3.1 - Cleaned up');
+console.log('DEBUG: i18n.js REPLACEMENT - APPLY_TRANSLATIONS_REFACTORED');
 
 var i18n = {
     currentLanguage: 'en',
