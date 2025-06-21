@@ -156,6 +156,7 @@ header {
     margin-bottom: 20px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     position: relative; 
     z-index: 1001;      
 }
@@ -1131,10 +1132,15 @@ body.light-theme #avatar-dropdown #avatar-logout-button.dropdown-link {
 
 #main-image-container {
     position: relative; 
-    max-width: 800px; /* Ancho máximo para la imagen principal */
-    margin: 0 auto; /* Centrar el contenedor de la imagen */ /* Changed from 20px auto */
-    overflow: hidden; 
+    width: 100%; /* From user CSS */
+    max-width: 800px; 
+    min-width: 220px; /* From user CSS */
+    min-height: 220px; /* From user CSS */
+    aspect-ratio: 1/1; /* From user CSS */
+    margin: 0 auto; 
+    overflow: visible; /* Adjustment for testing */
     border-radius: 8px; 
+    z-index: 1002; /* Adjustment (already present) */
 }
 
 img#main-prin-image {
@@ -1151,27 +1157,35 @@ img#main-prin-image {
     width: 100%;
     height: 100%;
     pointer-events: none; /* Para que los clics pasen a la imagen si no caen en un botón */
+    z-index: 1005;
     /* Flexbox properties removed, relying on absolute positioning of children */
     /* border: 1px dashed lime; */ /* Para depuración visual */
 }
 
 /* --- Floating Buttons (individual button styles) --- */
 .floating-button {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: auto; /* Changed for aspect-ratio */
+    aspect-ratio: 1 / 1;
+    min-width: 40px;
     border-radius: 50%;
-    background-size: cover; 
+    background-size: contain; 
     background-position: center;
     background-repeat: no-repeat;
+    /* background-image property is set via inline styles in JS */
+    /* background-color: orange; */ /* Diagnostic style removed */
+    box-sizing: border-box;
+    padding: 0 !important;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, filter 0.2s ease-out;
     cursor: pointer;
     pointer-events: auto; 
-    position: absolute; /* Added position absolute */
-    border: 2px solid transparent; 
+    position: absolute; 
+    border: 2px solid transparent; /* Original border, keeping it for "no visible border" */
     /* Para asegurar que no herede estilos de 'a' si es un link */
     text-decoration: none; 
     color: inherit; 
+    z-index: 1006;
 }
 
 .floating-button:hover {
@@ -1187,6 +1201,13 @@ img#main-prin-image {
     filter: brightness(1.05);
 }
 
+@media (max-width: 600px) {
+    .floating-button {
+        width: 44px; /* CSS se encarga, JS leerá este valor */
+        /* min-width: 40px; /* Podría ser más pequeño si se desea, ej 32px, o heredar el de 40px */
+    }
+}
+
 /* ESTILOS DE DIAGNÓSTICO TEMPORAL */
 #sidebar-toggle svg {
     fill: red !important;
@@ -1196,4 +1217,86 @@ img#main-prin-image {
     visibility: visible !important;
     display: inline-block !important; /* o block, dependiendo de cómo se comporte inline-flex */
     border: 1px solid lime; /* Para ver su caja */
+}
+
+/* Asegurar visibilidad de iconos en el Avatar Dropdown */
+#avatar-dropdown .sidebar-icon {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 24px !important; 
+    height: 24px !important; 
+    flex-shrink: 0; /* Evitar que se encoja en el contexto flex del enlace <a> */
+    margin-right: 8px; /* Mantener el margen que ya tenía el span */
+}
+
+#avatar-dropdown .sidebar-icon svg {
+    display: block !important; 
+    width: 100% !important;   
+    height: 100% !important;  
+    fill: currentColor !important; 
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+/* Perfil cuadrado en el sidebar: marco y sombra amarillos, textos centrados */
+#dropdown-profile-card.profile-card {
+    border: 3px solid #FFD600; /* Amarillo fuerte */
+    box-shadow: 0 0 18px 2px #FFD60088;
+    background: var(--dark-bg2, #222);
+    border-radius: 14px;
+    padding: 18px 12px 12px 12px;
+    margin-bottom: 16px;
+    width: 100%;
+    max-width: 260px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#dropdown-profile-card .profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0 auto 10px auto;
+    background: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#dropdown-profile-card .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+#dropdown-profile-card .profile-info {
+    width: 100%;
+    text-align: center;
+}
+
+#dropdown-profile-card .profile-name {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 6px;
+    color: var(--text-light, #fff);
+    text-align: center;
+}
+
+#dropdown-profile-card .profile-affiliates,
+#dropdown-profile-card .profile-affiliate-url,
+#dropdown-profile-card .profile-commission {
+    font-size: 0.95em;
+    color: var(--text-muted, #aaa);
+    margin-bottom: 4px;
+    word-break: break-all;
+    text-align: center;
+}
+
+#dropdown-profile-card .profile-affiliate-url a {
+    color: var(--accent-blue, #3B82F6);
+    text-decoration: underline;
+    font-size: 0.95em;
+    text-align: center;
 }
