@@ -21,6 +21,8 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
     const affiliateDashboardSection = document.getElementById('affiliate-dashboard');
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebar-toggle');
+    const avatarAdminPanelLinkContainer = document.getElementById('avatar-admin-panel-link-container');
+    const avatarNotificationsLinkContainer = document.getElementById('avatar-notifications-link-container'); // ADDED
 
     const profileNameEl = document.getElementById('profile-name');
     const profileEmailEl = document.getElementById('profile-email');
@@ -35,10 +37,10 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
     const defaultAvatarUrl = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
 
     if (isLoggedIn && profile) {
-        if (userAuthSection) userAuthSection.classList.add('hidden'); // Hide original auth section if it exists
+        if (userAuthSection) userAuthSection.classList.add('hidden'); 
         if (userProfileSection) userProfileSection.classList.remove('hidden');
         if (logoutButton) logoutButton.classList.remove('hidden');
-        if (avatarLogoutButton && avatarLogoutButton.closest('.MuiMenuItem-root')) { // Check if it's part of a MUI-like list
+        if (avatarLogoutButton && avatarLogoutButton.closest('.MuiMenuItem-root')) { 
             avatarLogoutButton.closest('.MuiMenuItem-root').classList.remove('hidden');
         } else if (avatarLogoutButton) {
              avatarLogoutButton.classList.remove('hidden');
@@ -46,13 +48,24 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         if (affiliateDashboardSection) affiliateDashboardSection.classList.remove('hidden');
         
         if (sidebarToggle) sidebarToggle.classList.remove('hidden');
-        if (sidebar) sidebar.classList.add('hidden'); // Sidebar starts hidden, user toggles it
+        if (sidebar) sidebar.classList.add('hidden'); 
         document.body.classList.remove('sidebar-content-shifted');
-
 
         if (adminPageLink) {
             if (profile.isAdmin) adminPageLink.classList.remove('hidden');
             else adminPageLink.classList.add('hidden');
+        }
+
+        if (avatarAdminPanelLinkContainer) {
+            if (profile.isAdmin) {
+                avatarAdminPanelLinkContainer.classList.remove('hidden');
+            } else {
+                avatarAdminPanelLinkContainer.classList.add('hidden');
+            }
+        }
+        // ADDED for avatar notifications link
+        if (avatarNotificationsLinkContainer) {
+            avatarNotificationsLinkContainer.classList.remove('hidden');
         }
         
         if (profileNameEl) profileNameEl.textContent = profile.name || '';
@@ -69,8 +82,8 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         }
 
         if (headerCreditsButton) headerCreditsButton.classList.remove('hidden');
-        if (headerTasksButton) headerTasksButton.classList.remove('hidden');
-        if (headerCartButton) headerCartButton.classList.remove('hidden'); // Cart button visible when logged in
+        // if (headerTasksButton) headerTasksButton.classList.remove('hidden'); // Already removed from HTML
+        if (headerCartButton) headerCartButton.classList.remove('hidden'); 
         if (headerAvatarButton) headerAvatarButton.classList.remove('hidden');
 
         if (window.Checkout && typeof Checkout.updateCheckoutFormForAuthState === 'function') {
@@ -82,7 +95,7 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
 
     } else { // Not logged in
         this.cachedProfile = null;
-        if (userAuthSection) userAuthSection.classList.remove('hidden'); // Show original auth section if it exists (it shouldn't)
+        if (userAuthSection) userAuthSection.classList.remove('hidden'); 
         if (userProfileSection) userProfileSection.classList.add('hidden');
         if (logoutButton) logoutButton.classList.add('hidden');
         if (avatarLogoutButton && avatarLogoutButton.closest('.MuiMenuItem-root')) {
@@ -92,11 +105,18 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         }
         if (affiliateDashboardSection) affiliateDashboardSection.classList.add('hidden');
         if (adminPageLink) adminPageLink.classList.add('hidden');
+        
+        if (avatarAdminPanelLinkContainer) {
+            avatarAdminPanelLinkContainer.classList.add('hidden');
+        }
+        // ADDED for avatar notifications link
+        if (avatarNotificationsLinkContainer) {
+            avatarNotificationsLinkContainer.classList.add('hidden');
+        }
 
         if (sidebar) sidebar.classList.add('hidden');
         if (sidebarToggle) sidebarToggle.classList.add('hidden');
         document.body.classList.remove('sidebar-content-shifted');
-
 
         if (profileNameEl) profileNameEl.textContent = '';
         if (profileEmailEl) profileEmailEl.textContent = '';
@@ -112,14 +132,12 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         }
 
         if (headerCreditsButton) headerCreditsButton.classList.add('hidden');
-        if (headerTasksButton) headerTasksButton.classList.add('hidden');
-        // headerCartButton can remain visible. Its content/badge should be updated by Cart module.
+        // if (headerTasksButton) headerTasksButton.classList.add('hidden'); // Already removed from HTML
         if (headerAvatarButton) headerAvatarButton.classList.remove('hidden'); 
 
         if (window.Checkout && typeof Checkout.updateCheckoutFormForAuthState === 'function') {
             Checkout.updateCheckoutFormForAuthState(false, null);
         }
-        // No need to call Affiliate.fetchAffiliateDashboardData()
     }
     console.log('[Auth] UI update for auth state complete.');
 };
@@ -163,11 +181,7 @@ Auth.fetchProfile = async function() {
         return profile;
     } catch (error) {
         console.error('[Auth] Error fetching profile:', error);
-        // If fetch fails (network error, server error not 401/403), token is not necessarily bad.
-        // We call updateAuthStateUI with isLoggedIn=false to reflect that we couldn't confirm the session.
-        // This will clear profile-specific UI but keep login option available.
-        // Alternatively, could try to use cachedProfile if available and show an "offline" status.
-        this.updateAuthStateUI(false, null); // Safer to assume logged out if profile can't be fetched
+        this.updateAuthStateUI(false, null); 
         throw error; 
     }
 };
@@ -183,7 +197,7 @@ Auth.handleRegistration = async function(isFromModal = false) {
         password = document.getElementById('modal-register-password').value;
         formToReset = document.getElementById('modal-register-form');
     } else {
-        name = document.getElementById('register-name').value; // Assumes these IDs exist if not modal
+        name = document.getElementById('register-name').value; 
         email = document.getElementById('register-email').value;
         password = document.getElementById('register-password').value;
         formToReset = document.getElementById('register-form');
@@ -193,7 +207,7 @@ Auth.handleRegistration = async function(isFromModal = false) {
     let requestBody = { name, email, password };
     if (referringAffiliateId) requestBody.referringAffiliateId = referringAffiliateId;
 
-    console.log('[Auth] Attempting registration with data:', JSON.stringify(requestBody)); // Log de datos a enviar
+    console.log('[Auth] Attempting registration with data:', JSON.stringify(requestBody)); 
 
     try {
         const response = await fetch(`${apiBaseUrl}/auth/register`, {
@@ -201,9 +215,9 @@ Auth.handleRegistration = async function(isFromModal = false) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
         });
-        console.log('[Auth] Registration response status:', response.status); // Log de status
+        console.log('[Auth] Registration response status:', response.status); 
         const data = await response.json();
-        console.log('[Auth] Registration response data:', data); // Log de datos de respuesta
+        console.log('[Auth] Registration response data:', data); 
 
         if (response.ok) {
             const message = (typeof i18n !== 'undefined' && i18n.getTranslation) ? i18n.getTranslation("text_registration_success", "Registration successful! Please log in.") : "Registration successful! Please log in.";
@@ -216,7 +230,7 @@ Auth.handleRegistration = async function(isFromModal = false) {
             if (typeof UI !== 'undefined' && UI.showNotification) UI.showNotification(message, 'error'); else alert(message);
         }
     } catch (error) {
-        console.error('[Auth] Registration fetch/system error:', error); // Log de error de fetch
+        console.error('[Auth] Registration fetch/system error:', error); 
         const message = (typeof i18n !== 'undefined' && i18n.getTranslation) ? i18n.getTranslation("alert_registration_error_generic", "An error occurred during registration.") : "An error occurred during registration.";
         if (typeof UI !== 'undefined' && UI.showNotification) UI.showNotification(message, 'error'); else alert(message);
     }
@@ -232,23 +246,23 @@ Auth.handleLogin = async function(isFromModal = false) {
         password = document.getElementById('modal-login-password').value;
         formToReset = document.getElementById('modal-login-form');
     } else {
-        email = document.getElementById('login-email').value; // Assumes these IDs exist if not modal
+        email = document.getElementById('login-email').value; 
         password = document.getElementById('login-password').value;
         formToReset = document.getElementById('login-form');
     }
     
-    let requestBody = { email, password }; // Definir requestBody para login
-    console.log('[Auth] Attempting login with data:', JSON.stringify(requestBody)); // Log de datos a enviar
+    let requestBody = { email, password }; 
+    console.log('[Auth] Attempting login with data:', JSON.stringify(requestBody)); 
 
     try {
         const response = await fetch(`${apiBaseUrl}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody) // Use requestBody here
+            body: JSON.stringify(requestBody) 
         });
-        console.log('[Auth] Login response status:', response.status); // Log de status
+        console.log('[Auth] Login response status:', response.status); 
         const result = await response.json();
-        console.log('[Auth] Login response data:', result); // Log de datos de respuesta
+        console.log('[Auth] Login response data:', result); 
 
         if (response.ok && result.token) {
             localStorage.setItem('authToken', result.token);
@@ -265,10 +279,10 @@ Auth.handleLogin = async function(isFromModal = false) {
             if (typeof UI !== 'undefined' && UI.showNotification) UI.showNotification(message, 'error'); else alert(message);
         }
     } catch (error) {
-        console.error('[Auth] Login fetch/system error:', error); // Log de error de fetch
+        console.error('[Auth] Login fetch/system error:', error); 
         const message = (typeof i18n !== 'undefined' && i18n.getTranslation) ? i18n.getTranslation("alert_login_error_generic", "An error occurred during login.") : "An error occurred during login.";
         if (typeof UI !== 'undefined' && UI.showNotification) UI.showNotification(message, 'error'); else alert(message);
-        this.updateAuthStateUI(false, null); // Ensure UI reflects logout on critical login error
+        this.updateAuthStateUI(false, null); 
     }
 };
 
@@ -278,7 +292,6 @@ Auth.handleLogout = function() {
     localStorage.removeItem('isAdmin');
     localStorage.removeItem('userName');
     localStorage.removeItem('userAvatarUrl');
-    // localStorage.removeItem('userEmail'); // If it was stored
 
     this.cachedProfile = null; 
     this.updateAuthStateUI(false, null);
