@@ -651,5 +651,32 @@ window.UI.showNotification = function(message, type = 'info', duration = 3000) {
     }, duration);
 };
 
+function updateSidebarProfileCard(profile) {
+    // Avatar y nombre
+    document.getElementById('dropdown-profile-avatar').src = profile.avatar_url || 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
+    document.getElementById('dropdown-profile-name').textContent = profile.name || 'Usuario';
+
+    // Conteo de afiliados
+    document.getElementById('dropdown-profile-affiliates').textContent = profile.total_affiliates || '0';
+
+    // URL de afiliado funcional
+    const affiliateUrl = `${window.location.origin}/?ref=${encodeURIComponent(profile.affiliate_id)}`;
+    const urlElem = document.getElementById('dropdown-profile-url');
+    urlElem.href = affiliateUrl;
+    urlElem.textContent = affiliateUrl;
+
+    // % de ganancia
+    document.getElementById('dropdown-profile-commission').textContent = (profile.commission_percent ? profile.commission_percent + '%' : '0%');
+}
+
+// Ejemplo de uso después de obtener el perfil (ajusta según tu backend):
+const userProfile = {
+    avatar_url: localStorage.getItem('userAvatarUrl'),
+    name: localStorage.getItem('userName'),
+    affiliate_id: localStorage.getItem('userAffiliateId') || 'demo123', // Debes obtenerlo de tu backend
+    total_affiliates: 12, // Debes obtenerlo de tu backend
+    commission_percent: 10 // Debes obtenerlo de tu backend
+};
+updateSidebarProfileCard(userProfile);
 
 console.log('ui.js loaded with all UI component initializers.');
