@@ -8,12 +8,6 @@ window.UI.isAuthModalLoaded = false;
 
 window.UI.loadAuthModalHTML = async function() { // Corrected assignment syntax
     if (window.UI.isAuthModalLoaded) {
-        // Si el HTML ya se cargó una vez, no es necesario volver a cargarlo.
-        // La inicialización de la animación ya debería haber ocurrido.
-        // Si se necesita reiniciar la animación o el estado del modal (ej. panel activo)
-        // cada vez que se muestra, esa lógica iría en showAuthModal o
-        // initializeAuthModalAnimation debería ser idempotente o tener una función de reseteo.
-        // Por ahora, asumimos que la inicialización de la animación solo necesita ocurrir una vez.
         return Promise.resolve();
     }
     try {
@@ -26,18 +20,16 @@ window.UI.loadAuthModalHTML = async function() { // Corrected assignment syntax
         const modalContainer = document.getElementById('auth-modal-container'); 
 
         if (modalContainer) {
-            modalContainer.innerHTML = html; // Inyectar el contenido del modal
-            window.UI.isAuthModalLoaded = true; // Marcar como cargado
+            modalContainer.innerHTML = html; 
+            window.UI.isAuthModalLoaded = true; 
             console.log('Auth modal HTML successfully loaded into #auth-modal-container.');
             
-            // Llamar a la función de animación DESPUÉS de inyectar el HTML
             if (typeof initializeAuthModalAnimation === 'function') {
                 initializeAuthModalAnimation(); 
             } else {
                 console.error('initializeAuthModalAnimation function not found. Ensure login-modal.js is loaded and defines it.');
             }
 
-            // ---> ADDING THIS <---
             const closeButton = document.getElementById('close-auth-modal-btn');
             if (closeButton) {
                 closeButton.addEventListener('click', UI.hideAuthModal); 
@@ -45,7 +37,6 @@ window.UI.loadAuthModalHTML = async function() { // Corrected assignment syntax
             } else {
                 console.warn('#close-auth-modal-btn not found in modal HTML after injection.');
             }
-            // ---> END OF ADDING <---
 
             return Promise.resolve();
         } else {
@@ -56,12 +47,11 @@ window.UI.loadAuthModalHTML = async function() { // Corrected assignment syntax
     } catch (error) {
         console.error('Error in UI.loadAuthModalHTML:', error);
         window.UI.isAuthModalLoaded = false;
-        return Promise.reject(error); // Re-lanzar el error para que showAuthModal lo maneje
+        return Promise.reject(error); 
     }
-}; // Removed trailing comma, added semicolon for statement
+}; 
 
 window.UI.showAuthModal = async function() {
-    // The new modal structure uses #auth-modal-container
     const modalContainer = document.getElementById('auth-modal-container'); 
     
     if (!modalContainer) {
@@ -70,12 +60,7 @@ window.UI.showAuthModal = async function() {
     }
 
     try {
-        // Ensure HTML is "loaded" (i.e., references are ready, especially if it was ever dynamic)
         await window.UI.loadAuthModalHTML(); 
-        
-        // Forms inside #auth-modal-container should have IDs:
-        // modal-register-form (if we add it later to the form tag) // These IDs are now on the forms
-        // modal-login-form (if we add it later to the form tag)   // These IDs are now on the forms
         
         const modalRegisterForm = document.getElementById('modal-register-form');
         const modalLoginForm = document.getElementById('modal-login-form');
@@ -110,10 +95,7 @@ window.UI.showAuthModal = async function() {
             console.error('UI.showAuthModal: Modal login form (#modal-login-form) NOT FOUND.');
         }
         
-        modalContainer.classList.remove('hidden'); // modalContainer es #auth-modal-container
-        // The new modal has its own animation system via login-modal.js,
-        // so we don't need to add/remove classes like 'active' on the container itself here.
-        // The #container inside #auth-modal-container handles its own state.
+        modalContainer.classList.remove('hidden'); 
 
         console.log('Auth modal shown by ui.js (using #auth-modal-container).');
         const loginEmailInput = document.getElementById('modal-login-email');
@@ -139,24 +121,27 @@ window.UI.hideAuthModal = function() {
     const modalContainer = document.getElementById('auth-modal-container');
     if (modalContainer) {
         modalContainer.classList.add('hidden');
-        // If the modal has internal state that needs resetting (like active panel),
-        // login-modal.js should handle that or expose a reset function.
         console.log('Auth modal hidden by ui.js (using #auth-modal-container).');
     }
 };
 
-// --- Sidebar Toggle Logic ---
 window.UI.initSidebarToggle = function() {
     const sidebarToggleButton = document.getElementById('sidebar-toggle');
     const sidebar = document.getElementById('sidebar');
-    // const mainContent = document.getElementById('main-content'); // Not strictly needed if using body class
 
     if (sidebarToggleButton && sidebar) {
         sidebarToggleButton.addEventListener('click', function() {
             sidebar.classList.toggle('hidden');
             document.body.classList.toggle('sidebar-content-shifted');
-            sidebarToggleButton.classList.toggle('sidebar-toggle-active'); // For icon animation
+            sidebarToggleButton.classList.toggle('sidebar-toggle-active'); 
             console.log('Sidebar toggled. Sidebar hidden:', sidebar.classList.contains('hidden'));
+
+            if (window.FloatingButtons && typeof window.FloatingButtons.positionButtons === 'function') {
+                setTimeout(() => {
+                    window.FloatingButtons.positionButtons();
+                    console.log('FloatingButtons.positionButtons() called after sidebar toggle.');
+                }, 350); 
+            }
         });
         console.log('Sidebar toggle initialized.');
     } else {
@@ -165,19 +150,10 @@ window.UI.initSidebarToggle = function() {
     }
 };
 
-
-// --- Floating Buttons Logic (Old - to be removed or updated if FloatingButtons module takes over) ---
-// This function seems to be from an older implementation plan.
-// The new FloatingButtons module (floatingButtons.js) has its own fetchAndRender.
-// This UI.fetchAndRenderFloatingButtons should likely be deprecated/removed.
-// For now, I will leave it as is, as the subtask doesn't explicitly say to remove it,
-// but it's a point of potential conflict or redundancy.
 window.UI.fetchAndRenderFloatingButtons = async function() {
     console.warn("UI.fetchAndRenderFloatingButtons is likely deprecated. Functionality moved to FloatingButtons.js");
-    // ... (original content of this function) ...
 };
 
-// --- Theme Switcher Logic ---
 window.UI._currentTheme = 'dark'; 
 
 window.UI.applyThemePreference = function(theme) {
@@ -236,8 +212,6 @@ window.UI.initThemeSwitcher = function() {
     console.log('Theme switcher initialized. Initial theme:', this._currentTheme);
 };
 
-
-// --- Settings Dropdown Logic ---
 window.UI.initSettingsDropdown = function() {
     const settingsButton = document.getElementById('header-settings-button');
     const settingsDropdown = document.getElementById('settings-dropdown');
@@ -245,8 +219,8 @@ window.UI.initSettingsDropdown = function() {
     const cartSummaryDropdown = document.getElementById('cart-summary-dropdown');
 
     if (settingsButton && settingsDropdown) {
-        settingsDropdown.classList.add('hidden'); // <--- LÍNEA AÑADIDA
-        console.log('UI.initSettingsDropdown: Ensured #settings-dropdown is hidden at initialization of its listener.'); // <--- LÍNEA AÑADIDA
+        settingsDropdown.classList.add('hidden'); 
+        console.log('UI.initSettingsDropdown: Ensured #settings-dropdown is hidden at initialization of its listener.'); 
             
         console.log('UI.initSettingsDropdown: Found settings button and dropdown. Attaching listener.');
         settingsButton.addEventListener('click', function(event) {
@@ -269,19 +243,18 @@ window.UI.initSettingsDropdown = function() {
                 console.log('UI.initSettingsDropdown: Auth modal hidden.');
             }
 
-            console.log('UI.initSettingsDropdown: Click handler - Current classes on #settings-dropdown before DwasHidden check:', settingsDropdown.className); // NUEVO LOG
-            console.log('UI.initSettingsDropdown: Click handler - Does it contain "hidden"?', settingsDropdown.classList.contains('hidden')); // NUEVO LOG
-            const DwasHidden = settingsDropdown.classList.contains('hidden'); // Estado ANTES de alternar
-            settingsDropdown.classList.toggle('hidden'); // Alternar la clase
-            const DisNowHidden = settingsDropdown.classList.contains('hidden'); // Estado DESPUÉS de alternar
+            console.log('UI.initSettingsDropdown: Click handler - Current classes on #settings-dropdown before DwasHidden check:', settingsDropdown.className); 
+            console.log('UI.initSettingsDropdown: Click handler - Does it contain "hidden"?', settingsDropdown.classList.contains('hidden')); 
+            const DwasHidden = settingsDropdown.classList.contains('hidden'); 
+            settingsDropdown.classList.toggle('hidden'); 
+            const DisNowHidden = settingsDropdown.classList.contains('hidden'); 
 
-            // Actualizar los console.log para reflejar el estado antes y después del toggle
             console.log(`UI.initSettingsDropdown: Settings dropdown - WasHidden: ${DwasHidden}, IsNowHidden: ${DisNowHidden}`);
 
-            if (!DisNowHidden) { // Si el dropdown NO está oculto ahora (es decir, se acaba de mostrar)
+            if (!DisNowHidden) { 
                 console.log('UI.initSettingsDropdown: Dropdown is now visible, proceeding to position.');
                 try {
-                    const btnRect = settingsButton.getBoundingClientRect(); // settingsButton debe estar en el scope del listener
+                    const btnRect = settingsButton.getBoundingClientRect(); 
                     settingsDropdown.style.top = (btnRect.bottom + window.scrollY + 5) + 'px';
                     settingsDropdown.style.left = 'auto';
                     settingsDropdown.style.right = (window.innerWidth - btnRect.right - window.scrollX) + 'px';
@@ -295,10 +268,10 @@ window.UI.initSettingsDropdown = function() {
                     console.log('UI.initSettingsDropdown: Settings dropdown positioned and shown.');
                 } catch (e) {
                     console.error('UI.initSettingsDropdown: Error during positioning:', e);
-                    settingsDropdown.classList.add('hidden'); // Ocultar si hay error de posición
+                    settingsDropdown.classList.add('hidden'); 
                     console.log('UI.initSettingsDropdown: Settings dropdown hidden due to positioning error.');
                 }
-            } else { // Si el dropdown SÍ está oculto ahora (es decir, se acaba de ocultar)
+            } else { 
                 console.log('UI.initSettingsDropdown: Settings dropdown is now hidden.');
             }
         });
@@ -309,7 +282,6 @@ window.UI.initSettingsDropdown = function() {
     }
 };
 
-// --- Cart Summary Dropdown Logic ---
 window.UI.initCartSummaryDropdown = function() {
     const cartButton = document.getElementById('header-cart-button');
     const cartDropdown = document.getElementById('cart-summary-dropdown');
@@ -319,7 +291,6 @@ window.UI.initCartSummaryDropdown = function() {
     if (cartButton && cartDropdown) {
         cartButton.addEventListener('click', function(event) {
             event.stopPropagation();
-            // Hide other dropdowns
             if (avatarDropdown && !avatarDropdown.classList.contains('hidden')) avatarDropdown.classList.add('hidden');
             if (settingsDropdown && !settingsDropdown.classList.contains('hidden')) settingsDropdown.classList.add('hidden');
             
@@ -331,7 +302,7 @@ window.UI.initCartSummaryDropdown = function() {
             const isHidden = cartDropdown.classList.contains('hidden');
             if (isHidden) {
                 if (window.Cart && typeof Cart.renderCartSummaryDropdown === 'function') {
-                    Cart.renderCartSummaryDropdown(); // Ensure content is up-to-date
+                    Cart.renderCartSummaryDropdown(); 
                 }
                 
                 cartDropdown.classList.remove('hidden');
@@ -340,7 +311,7 @@ window.UI.initCartSummaryDropdown = function() {
                 cartDropdown.style.left = 'auto';
                 cartDropdown.style.right = (window.innerWidth - btnRect.right - window.scrollX) + 'px';
                 const dropdownRect = cartDropdown.getBoundingClientRect();
-                if (dropdownRect.left < 0) { // Prevent going off-screen left
+                if (dropdownRect.left < 0) { 
                     cartDropdown.style.right = 'auto';
                     cartDropdown.style.left = (btnRect.left + window.scrollX) + 'px';
                 }
@@ -357,20 +328,17 @@ window.UI.initCartSummaryDropdown = function() {
     }
 };
 
-
-// --- Avatar Button Logic (and Global Click Listener) ---
-window.UI.initAvatarButton = function() { // This function also initializes the global click listener
+window.UI.initAvatarButton = function() { 
     const headerAvatarButton = document.getElementById('header-avatar-button');
     const avatarDropdown = document.getElementById('avatar-dropdown');
     const settingsDropdown = document.getElementById('settings-dropdown'); 
-    const cartSummaryDropdown = document.getElementById('cart-summary-dropdown'); // Added for awareness
+    const cartSummaryDropdown = document.getElementById('cart-summary-dropdown'); 
 
     if (headerAvatarButton) {
         headerAvatarButton.addEventListener('click', function(event) {
             event.stopPropagation();
             const token = localStorage.getItem('authToken');
 
-            // Hide other dropdowns
             if (settingsDropdown && !settingsDropdown.classList.contains('hidden')) settingsDropdown.classList.add('hidden');
             if (cartSummaryDropdown && !cartSummaryDropdown.classList.contains('hidden')) cartSummaryDropdown.classList.add('hidden');
 
@@ -393,15 +361,12 @@ window.UI.initAvatarButton = function() { // This function also initializes the 
                             avatarDropdown.style.right = 'auto'; 
                             avatarDropdown.style.left = (btnRect.left + window.scrollX) + 'px';
                         }
-                        const userNameElement = avatarDropdown.querySelector('#avatar-dropdown-username');
-                        if (userNameElement) userNameElement.textContent = localStorage.getItem('userName') || 'User';
-                        const userImageElement = avatarDropdown.querySelector('#avatar-dropdown-user-image');
-                        if (userImageElement) userImageElement.src = localStorage.getItem('userAvatarUrl') || 'logo.png'; // Fallback to logo.png
-                        const userEmailElement = avatarDropdown.querySelector('#avatar-dropdown-user-email');
-                        if (userEmailElement && typeof Auth !== 'undefined' && Auth.cachedProfile) userEmailElement.textContent = Auth.cachedProfile.email || 'email@example.com';
+                        
+                        if (window.Auth && Auth.cachedProfile && typeof window.UI.updateDropdownProfileCard === 'function') {
+                            window.UI.updateDropdownProfileCard(Auth.cachedProfile);
+                        }
 
 
-                        // Initialize tabs for avatar dropdown if they exist
                         const avatarTabs = avatarDropdown.querySelectorAll('.MuiTab-root');
                         const avatarTabPanels = avatarDropdown.querySelectorAll('[role="tabpanel"]');
                         if (avatarTabs.length > 0 && avatarTabPanels.length > 0) {
@@ -419,27 +384,22 @@ window.UI.initAvatarButton = function() { // This function also initializes the 
                                     });
                                 });
                             });
-                            // Activate the first tab by default if none are selected
                             if (!avatarDropdown.querySelector('.MuiTab-root.Mui-selected')) {
                                 avatarTabs[0].click();
                             }
                         }
                         
-                        // Attach listener for avatar dropdown's logout button
                         const avatarLogoutButton = document.getElementById('avatar-logout-button');
                         if (avatarLogoutButton && window.Auth && typeof Auth.handleLogout === 'function') {
-                            // Check if listener already attached to prevent duplicates if initAvatarButton is called multiple times
                             if (!avatarLogoutButton.hasAttribute('data-logout-listener-attached')) {
                                 avatarLogoutButton.addEventListener('click', function(event) {
                                     event.preventDefault();
                                     Auth.handleLogout();
-                                    avatarDropdown.classList.add('hidden'); // Hide dropdown after logout
+                                    avatarDropdown.classList.add('hidden'); 
                                 });
                                 avatarLogoutButton.setAttribute('data-logout-listener-attached', 'true');
                             }
                         }
-
-
                     } else {
                         avatarDropdown.classList.add('hidden');
                     }
@@ -453,34 +413,27 @@ window.UI.initAvatarButton = function() { // This function also initializes the 
         console.error('UI.initAvatarButton: Header avatar button (#header-avatar-button) not found.');
     }
 
-    // Consolidated Global Click Listener (ensure it runs only once)
     if (!document.body.hasAttribute('data-global-click-listener-attached')) {
         document.addEventListener('click', function(event) {
             const authModalContainer = document.getElementById('auth-modal-container');
-            // Check if click is outside the auth modal and not on any button that opens a dropdown
             if (authModalContainer && !authModalContainer.classList.contains('hidden')) {
                 const clickedInsideModal = authModalContainer.contains(event.target);
                 const clickedOnAvatarButton = headerAvatarButton && headerAvatarButton.contains(event.target);
-                // Add checks for other potential modal openers if necessary
 
-                if (!clickedInsideModal && !clickedOnAvatarButton /* && !clickedOnOtherModalOpener */) {
-                     // Only hide if the click is truly outside interactive elements that manage their own state.
-                     // For example, if a dropdown is open, its own logic should handle clicks on its button.
-                     // This global listener is more for clicks on the body itself.
+                if (!clickedInsideModal && !clickedOnAvatarButton ) {
                      let shouldHideModal = true;
                      const activeDropdowns = [
                         document.getElementById('avatar-dropdown'),
                         document.getElementById('settings-dropdown'),
                         document.getElementById('cart-summary-dropdown')
-                     ].filter(Boolean); // Remove nulls if some don't exist
+                     ].filter(Boolean); 
 
                      for (const dropdown of activeDropdowns) {
                          if (dropdown.contains(event.target)) {
-                             shouldHideModal = false; // Click was inside an open dropdown
+                             shouldHideModal = false; 
                              break;
                          }
                      }
-                     // Also check if click was on any of the buttons that toggle these dropdowns
                      const dropdownButtons = [
                         headerAvatarButton,
                         document.getElementById('header-settings-button'),
@@ -496,7 +449,6 @@ window.UI.initAvatarButton = function() { // This function also initializes the 
                 }
             }
 
-            // Close Avatar Dropdown
             const currentAvatarDropdown = document.getElementById('avatar-dropdown');
             if (currentAvatarDropdown && !currentAvatarDropdown.classList.contains('hidden')) {
                 if (headerAvatarButton && !headerAvatarButton.contains(event.target) && !currentAvatarDropdown.contains(event.target)) {
@@ -504,7 +456,6 @@ window.UI.initAvatarButton = function() { // This function also initializes the 
                 }
             }
 
-            // Close Settings Dropdown
             const currentSettingsDropdown = document.getElementById('settings-dropdown');
             const currentSettingsButton = document.getElementById('header-settings-button');
             if (currentSettingsDropdown && !currentSettingsDropdown.classList.contains('hidden')) {
@@ -513,7 +464,6 @@ window.UI.initAvatarButton = function() { // This function also initializes the 
                 }
             }
             
-            // Close Cart Summary Dropdown (Modified part)
             const currentCartSummaryDropdown = document.getElementById('cart-summary-dropdown');
             const currentCartButton = document.getElementById('header-cart-button');
             if (currentCartSummaryDropdown && !currentCartSummaryDropdown.classList.contains('hidden')) {
@@ -527,7 +477,6 @@ window.UI.initAvatarButton = function() { // This function also initializes the 
     }
 };
 
-// --- Language Switcher Logic ---
 window.UI.updateActiveLanguageButton = function(activeLang) {
     const langEnButton = document.getElementById('lang-en-button');
     const langEsButton = document.getElementById('lang-es-button');
@@ -544,14 +493,12 @@ window.UI.updateActiveLanguageButton = function(activeLang) {
             langEnButton.classList.remove(activeClass);
             langEsButton.classList.remove(activeClass);
         }
-        // console.log(`Active language button updated to: ${activeLang}`); // Can be noisy
     }
 };
 
 window.UI.initLanguageSwitcherButtons = function() {
     const langButtonsContainer = document.getElementById('language-buttons-container-dropdown');
     if (!langButtonsContainer) {
-        // console.warn('Language buttons container (#language-buttons-container-dropdown) not found.');
         return;
     }
 
@@ -597,13 +544,11 @@ window.UI.initLanguageSwitcherButtons = function() {
     console.log('Language switcher (in dropdown) initialized.');
 };
 
-// Notification System (Basic Example)
 window.UI.showNotification = function(message, type = 'info', duration = 3000) {
     let notificationArea = document.getElementById('notification-area');
     if (!notificationArea) {
         notificationArea = document.createElement('div');
         notificationArea.id = 'notification-area';
-        // Basic styling for notification area (should be in CSS)
         Object.assign(notificationArea.style, {
             position: 'fixed',
             top: '20px',
@@ -617,10 +562,9 @@ window.UI.showNotification = function(message, type = 'info', duration = 3000) {
     }
 
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`; // Use classes for styling
+    notification.className = `notification notification-${type}`; 
     notification.textContent = message;
 
-    // More styling (should be in CSS ideally)
     Object.assign(notification.style, {
         padding: '10px 20px',
         borderRadius: '5px',
@@ -633,7 +577,7 @@ window.UI.showNotification = function(message, type = 'info', duration = 3000) {
         notification.style.backgroundColor = 'var(--error-red, #dc3545)';
     } else if (type === 'success') {
         notification.style.backgroundColor = 'var(--success-green, #28a745)';
-    } else { // info or default
+    } else { 
         notification.style.backgroundColor = 'var(--accent-blue, #3B82F6)';
     }
 
@@ -644,39 +588,53 @@ window.UI.showNotification = function(message, type = 'info', duration = 3000) {
         setTimeout(() => {
             notification.remove();
             if (notificationArea.children.length === 0) {
-                // Optionally remove notificationArea if empty, or keep it.
-                // notificationArea.remove(); 
             }
-        }, 500); // Allow time for fade out
+        }, 500); 
     }, duration);
 };
 
-function updateSidebarProfileCard(profile) {
-    // Avatar y nombre
-    document.getElementById('dropdown-profile-avatar').src = profile.avatar_url || 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
-    document.getElementById('dropdown-profile-name').textContent = profile.name || 'Usuario';
+window.UI.updateDropdownProfileCard = function(profile) {
+    const defaultAvatar = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
+    const profileData = profile || {}; 
 
-    // Conteo de afiliados
-    document.getElementById('dropdown-profile-affiliates').textContent = profile.total_affiliates || '0';
+    const avatarImg = document.getElementById('dropdown-profile-avatar');
+    if (avatarImg) {
+        avatarImg.src = profileData.avatar_url || defaultAvatar;
+    }
 
-    // URL de afiliado funcional
-    const affiliateUrl = `${window.location.origin}/?ref=${encodeURIComponent(profile.affiliate_id)}`;
-    const urlElem = document.getElementById('dropdown-profile-url');
-    urlElem.href = affiliateUrl;
-    urlElem.textContent = affiliateUrl;
+    const nameEl = document.getElementById('dropdown-profile-name');
+    if (nameEl) {
+        nameEl.textContent = profileData.name || 'Usuario';
+    }
 
-    // % de ganancia
-    document.getElementById('dropdown-profile-commission').textContent = (profile.commission_percent ? profile.commission_percent + '%' : '0%');
-}
+    const affiliatesEl = document.getElementById('dropdown-profile-affiliates');
+    if (affiliatesEl) {
+        affiliatesEl.textContent = profileData.total_referrals_signed_up !== undefined ? profileData.total_referrals_signed_up : '1'; 
+    }
 
-// Ejemplo de uso después de obtener el perfil (ajusta según tu backend):
-const userProfile = {
-    avatar_url: localStorage.getItem('userAvatarUrl'),
-    name: localStorage.getItem('userName'),
-    affiliate_id: localStorage.getItem('userAffiliateId') || 'demo123', // Debes obtenerlo de tu backend
-    total_affiliates: 12, // Debes obtenerlo de tu backend
-    commission_percent: 10 // Debes obtenerlo de tu backend
+    const urlEl = document.getElementById('dropdown-profile-url');
+    if (urlEl) {
+        urlEl.href = profileData.affiliateLink || '#';
+        urlEl.textContent = profileData.affiliateLink || 'N/A';
+    }
+
+    const earningsEl = document.getElementById('dropdown-profile-commission'); 
+    if (earningsEl) {
+        if (profileData.total_commission_pending !== undefined && profileData.total_commission_pending !== null) { 
+            if (typeof formatCurrency === 'function') {
+                earningsEl.textContent = formatCurrency(profileData.total_commission_pending); 
+            } else {
+                const numericVal = parseFloat(profileData.total_commission_pending);
+                earningsEl.textContent = '$' + (isNaN(numericVal) ? '0.00' : numericVal.toFixed(2)) + ' (ej-fallback)'; 
+            }
+        } else {
+            if (typeof formatCurrency === 'function') {
+                earningsEl.textContent = formatCurrency(0); 
+            } else {
+                earningsEl.textContent = '$28.50 (ej-fallback)';
+            }
+        }
+    }
 };
-updateSidebarProfileCard(userProfile);
 
 console.log('ui.js loaded with all UI component initializers.');
