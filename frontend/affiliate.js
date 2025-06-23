@@ -65,6 +65,34 @@ window.Affiliate = {
                 this.affiliateLinkDisplay.textContent = i18n.getTranslation("text_error_loading", "Error loading");
             }
 
+            // Por ejemplo, en el evento de abrir el sidebar:
+            document.getElementById('sidebar-toggle').addEventListener('click', function() {
+                // ...tu código para mostrar el sidebar...
+                if (window.Affiliate && typeof window.Affiliate.fetchAffiliateDashboardData === 'function') {
+                    window.Affiliate.fetchAffiliateDashboardData();
+                }
+            });
+            
+            if (statsData) {
+        this.affiliateLinkDisplay.textContent = statsData.affiliate_link || 'N/A';
+                this.statsTotalSignups.textContent = statsData.total_referrals_signed_up || 0;
+                this.statsTotalOrders.textContent = statsData.total_referred_orders || 0;
+                this.statsPendingCommission.textContent = formatCurrency(statsData.total_commission_pending || 0);
+                this.statsPaidCommission.textContent = formatCurrency(statsData.total_commission_paid_or_approved || 0);
+                
+            if (statsData && window.UI && typeof window.UI.updateDropdownProfileCard === 'function') {
+                window.UI.updateDropdownProfileCard({
+                    name: window.Auth && window.Auth.cachedProfile ? window.Auth.cachedProfile.name : '', // O usa el nombre que prefieras
+                    avatar_url: window.Auth && window.Auth.cachedProfile ? window.Auth.cachedProfile.avatar_url : '', // O avatarUrl
+                    affiliateLink: statsData.affiliate_link || '',
+                    total_referrals_signed_up: statsData.total_referrals_signed_up || 0,
+                    total_commission_pending: statsData.total_commission_pending || 0
+                });
+                console.log('Perfil cuadrado que se enviará:', mappedProfile);
+                window.UI.updateDropdownProfileCard(mappedProfile);
+            }
+         }
+            
             this.affiliateReferralsList.innerHTML = ''; // Clear loading message
             if (referralsData && referralsData.length > 0) {
                 const ul = document.createElement('ul');
@@ -87,3 +115,4 @@ window.Affiliate = {
         }
     }
 };
+
