@@ -668,4 +668,121 @@ window.UI.updateDropdownProfileCard = function(profile) {
     }
 };
 
+window.UI.initUserProfileTabs = function() {
+    const tabButtons = document.querySelectorAll('#user-profile .MuiTabs-root .MuiTab-root');
+    const tabPanels = document.querySelectorAll('#user-profile .MuiCardActions-root > [role="tabpanel"]'); // Adjusted selector for direct children
+
+    if (!tabButtons.length || !tabPanels.length) {
+        console.error('User profile tabs or panels not found. Initialization skipped.');
+        return;
+    }
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // 1. Actualizar estado de los botones de pestañas
+            tabButtons.forEach(btn => {
+                btn.classList.remove('Mui-selected');
+                btn.setAttribute('aria-selected', 'false');
+                btn.setAttribute('tabindex', '-1');
+            });
+            button.classList.add('Mui-selected');
+            button.setAttribute('aria-selected', 'true');
+            button.setAttribute('tabindex', '0');
+
+            // 2. Mostrar/Ocultar paneles
+            const panelIdToShow = button.getAttribute('aria-controls');
+            tabPanels.forEach(panel => {
+                if (panel.id === panelIdToShow) {
+                    panel.classList.remove('hidden');
+                } else {
+                    panel.classList.add('hidden');
+                }
+            });
+            
+            // Mover indicador (opcional pero bueno para la UX visual)
+            const indicator = document.querySelector('#user-profile .MuiTabs-indicator');
+            if (indicator) {
+                indicator.style.left = button.offsetLeft + 'px';
+                indicator.style.width = button.offsetWidth + 'px';
+            }
+        });
+    });
+
+    // Asegurar estado inicial correcto (primera pestaña seleccionada y su panel visible)
+    let initialTabSelected = false;
+    tabButtons.forEach(btn => {
+        if (btn.classList.contains('Mui-selected')) {
+            initialTabSelected = true;
+            const panelIdToShow = btn.getAttribute('aria-controls');
+            tabPanels.forEach(panel => {
+                if (panel.id === panelIdToShow) {
+                    panel.classList.remove('hidden');
+                } else {
+                    panel.classList.add('hidden');
+                }
+            });
+            const indicator = document.querySelector('#user-profile .MuiTabs-indicator');
+            if (indicator) {
+                indicator.style.left = btn.offsetLeft + 'px';
+                indicator.style.width = btn.offsetWidth + 'px';
+            }
+        }
+    });
+
+    if (!initialTabSelected && tabButtons.length > 0) {
+        tabButtons[0].click(); 
+    }
+    console.log('User profile tabs initialized.');
+};
+
+window.UI.updateUserProfileSection = function(profile) {
+    const defaultAvatar = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg'; // O tu logo.png
+    const profileData = profile || {}; 
+    // console.log("DEBUG: updateUserProfileSection - received profileData:", JSON.parse(JSON.stringify(profileData)));
+
+    // Cabecera de la tarjeta de perfil
+    const avatarImg = document.getElementById('user-profile-main-avatar');
+    if (avatarImg) {
+        avatarImg.src = profileData.avatar_url || defaultAvatar;
+    }
+    const nameEl = document.getElementById('user-profile-main-name');
+    if (nameEl) {
+        nameEl.textContent = profileData.name || 'Usuario';
+    }
+    const roleEl = document.getElementById('user-profile-main-role'); // Asumiendo que quieres poner el email aquí
+    if (roleEl) {
+        roleEl.textContent = profileData.email || 'email@example.com';
+    }
+
+    // Pestaña General - Datos de Afiliado
+    const affiliatesEl = document.getElementById('user-profile-affiliates');
+    if (affiliatesEl) {
+        affiliatesEl.textContent = profileData.total_referrals_signed_up !== undefined ? profileData.total_referrals_signed_up : '0'; 
+    }
+
+    const urlEl = document.getElementById('user-profile-affiliate-url');
+    if (urlEl) {
+        urlEl.href = profileData.affiliateLink || '#';
+        urlEl.textContent = profileData.affiliateLink || 'N/A';
+    }
+
+    const commissionEl = document.getElementById('user-profile-commission'); 
+    if (commissionEl) {
+        if (profileData.total_commission_pending !== undefined && profileData.total_commission_pending !== null) { 
+            if (typeof formatCurrency === 'function') {
+                commissionEl.textContent = formatCurrency(profileData.total_commission_pending); 
+            } else {
+                const numericVal = parseFloat(profileData.total_commission_pending);
+                commissionEl.textContent = '$' + (isNaN(numericVal) ? '0.00' : numericVal.toFixed(2)); 
+            }
+        } else {
+            if (typeof formatCurrency === 'function') {
+                commissionEl.textContent = formatCurrency(0); 
+            } else {
+                commissionEl.textContent = '$0.00';
+            }
+        }
+    }
+};
+
 console.log('ui.js loaded with all UI component initializers.');
