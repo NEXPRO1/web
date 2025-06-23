@@ -148,6 +148,19 @@ window.UI.initSidebarToggle = function() {
         if (!sidebarToggleButton) console.error('UI.initSidebarToggle: Sidebar toggle button (#sidebar-toggle) not found.');
         if (!sidebar) console.error('UI.initSidebarToggle: Sidebar element (#sidebar) not found.');
     }
+    
+    window.UI.updateDropdownProfileCard = function(profile) {
+    console.log('Actualizando perfil cuadrado con:', profile);
+    document.getElementById('sidebar-toggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.remove('hidden');
+    // Espera un pequeño tiempo para asegurar que el DOM se actualizó
+    setTimeout(() => {
+        if (window.Affiliate && typeof window.Affiliate.fetchAffiliateDashboardData === 'function') {
+            window.Affiliate.fetchAffiliateDashboardData();
+        }
+    }, 100);
+    });
+    };
 };
 
 window.UI.fetchAndRenderFloatingButtons = async function() {
@@ -591,50 +604,6 @@ window.UI.showNotification = function(message, type = 'info', duration = 3000) {
             }
         }, 500); 
     }, duration);
-};
-
-window.UI.updateDropdownProfileCard = function(profile) {
-    const defaultAvatar = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
-    const profileData = profile || {}; 
-
-    const avatarImg = document.getElementById('dropdown-profile-avatar');
-    if (avatarImg) {
-        avatarImg.src = profileData.avatar_url || defaultAvatar;
-    }
-
-    const nameEl = document.getElementById('dropdown-profile-name');
-    if (nameEl) {
-        nameEl.textContent = profileData.name || 'Usuario';
-    }
-
-    const affiliatesEl = document.getElementById('dropdown-profile-affiliates');
-    if (affiliatesEl) {
-        affiliatesEl.textContent = profileData.total_referrals_signed_up !== undefined ? profileData.total_referrals_signed_up : '1'; 
-    }
-
-    const urlEl = document.getElementById('dropdown-profile-url');
-    if (urlEl) {
-        urlEl.href = profileData.affiliateLink || '#';
-        urlEl.textContent = profileData.affiliateLink || 'N/A';
-    }
-
-    const earningsEl = document.getElementById('dropdown-profile-commission'); 
-    if (earningsEl) {
-        if (profileData.total_commission_pending !== undefined && profileData.total_commission_pending !== null) { 
-            if (typeof formatCurrency === 'function') {
-                earningsEl.textContent = formatCurrency(profileData.total_commission_pending); 
-            } else {
-                const numericVal = parseFloat(profileData.total_commission_pending);
-                earningsEl.textContent = '$' + (isNaN(numericVal) ? '0.00' : numericVal.toFixed(2)) + ' (ej-fallback)'; 
-            }
-        } else {
-            if (typeof formatCurrency === 'function') {
-                earningsEl.textContent = formatCurrency(0); 
-            } else {
-                earningsEl.textContent = '$28.50 (ej-fallback)';
-            }
-        }
-    }
 };
 
 console.log('ui.js loaded with all UI component initializers.');
