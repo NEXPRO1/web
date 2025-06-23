@@ -103,11 +103,57 @@
         </section>
 
     <section id="user-profile" class="hidden">
-        <h2 data-i18n-key="section_user_profile">User Profile</h2>
-        <p><strong data-i18n-key="profile_label_name">Name:</strong> <span id="profile-name"></span></p>
-        <p><strong data-i18n-key="profile_label_email">Email:</strong> <span id="profile-email"></span></p>
-        <p><strong data-i18n-key="profile_label_affiliate_id">Affiliate ID:</strong> <span id="profile-affiliate-id"></span></p>
-        <p><strong data-i18n-key="affiliate_your_link">Your Affiliate Link:</strong> <a id="profile-affiliate-link" href="#" target="_blank"></a></p>
+           <div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-yu30p6" style="position: relative;">
+            <div class="bg-profile-content MuiBox-root css-0">
+                <div class="bg-profile MuiBox-root css-0">
+                    <div class="border-avatar">
+                        <img src="https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg" class="avatar-image" alt="avatar" id="user-profile-main-avatar">
+                        <label class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeSmall MuiButton-outlinedSizeSmall upload-img css-3um480" tabindex="0" role="button">
+                            <span class="MuiButton-startIcon MuiButton-iconSizeSmall css-16rzsu1">
+                                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-11fo197" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddAPhotoIcon"><path d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2z"></path></svg>
+                            </span>
+                            <input type="file" hidden="" accept=".png, .jpg">Importar<span class="MuiTouchRipple-root css-w0pj6f"></span>
+                        </label>
+                    </div>
+                    <div class="name-user MuiBox-root css-0">
+                        <h2 id="user-profile-main-name">demo</h2>
+                        <p id="user-profile-main-role">Usuario</p>
+                    </div>
+                </div>
+            </div>
+            <div class="MuiCardActions-root MuiCardActions-spacing card-actions css-3zukih">
+                <div class="MuiTabs-root css-9ggkj4">
+                    <div class="MuiTabs-scrollableX MuiTabs-hideScrollbar css-oqr85h" style="width: 99px; height: 99px; position: absolute; top: -9999px; overflow: scroll;"></div>
+                    <div class="MuiTabs-scroller MuiTabs-hideScrollbar MuiTabs-scrollableX css-1t0s2fz" style="margin-bottom: 0px;">
+                        <div aria-label="tab menu" class="MuiTabs-flexContainer css-7sga7m" role="tablist">
+                            <button class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary Mui-selected css-1tvmwaa" tabindex="0" type="button" role="tab" aria-selected="true" id="tab-0" aria-controls="tabpanel-0">
+                                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-11fo197" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AccountBoxIcon"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"></path></svg>General<span class="MuiTouchRipple-root css-w0pj6f"></span>
+                            </button>
+                            <button class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary css-1tvmwaa" tabindex="-1" type="button" role="tab" aria-selected="false" id="tab-1" aria-controls="tabpanel-1">
+                                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-11fo197" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LockIcon"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>Seguridad<span class="MuiTouchRipple-root css-w0pj6f"></span>
+                            </button>
+                            <button class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary css-1tvmwaa" tabindex="-1" type="button" role="tab" aria-selected="false" id="tab-2" aria-controls="tabpanel-2">
+                                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-11fo197" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DevicesIcon"><path d="M4 6h18V4H4c-1.1 0-2 .9-2 2v11H0v3h14v-3H4V6zm19 2h-6c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm-1 9h-4v-7h4v7z"></path></svg>Sesiones<span class="MuiTouchRipple-root css-w0pj6f"></span>
+                            </button>
+                        </div>
+                        <span class="MuiTabs-indicator css-1vtd088" style="left: 0px; width: 107.656px;"></span>
+                    </div>
+                </div>
+                <!-- Paneles de contenido de pestañas -->
+                <div id="tabpanel-0" role="tabpanel" aria-labelledby="tab-0" style="padding: 16px;">
+                    <!-- Contenido de Pestaña General: Aquí podrían ir los campos de perfil de afiliado -->
+                    <p><strong>Afiliados:</strong> <span id="user-profile-affiliates">0</span></p>
+                    <p><strong>URL de Afiliado:</strong> <a id="user-profile-affiliate-url" href="#" target="_blank" style="word-break: break-all;">N/A</a></p>
+                    <p><strong>Ganancia Pendiente:</strong> <span id="user-profile-commission">0%</span></p>
+                </div>
+                <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1" class="hidden" style="padding: 16px;">
+                    <p>Contenido de la pestaña Seguridad...</p>
+                </div>
+                <div id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2" class="hidden" style="padding: 16px;">
+                    <p>Contenido de la pestaña Sesiones...</p>
+                </div>
+            </div>
+        </div>
     </section>
 
     <section id="affiliate-dashboard" class="hidden">
