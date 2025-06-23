@@ -148,19 +148,6 @@ window.UI.initSidebarToggle = function() {
         if (!sidebarToggleButton) console.error('UI.initSidebarToggle: Sidebar toggle button (#sidebar-toggle) not found.');
         if (!sidebar) console.error('UI.initSidebarToggle: Sidebar element (#sidebar) not found.');
     }
-    
-    window.UI.updateDropdownProfileCard = function(profile) {
-    console.log('Actualizando perfil cuadrado con:', profile);
-    document.getElementById('sidebar-toggle').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.remove('hidden');
-    // Espera un pequeño tiempo para asegurar que el DOM se actualizó
-    setTimeout(() => {
-        if (window.Affiliate && typeof window.Affiliate.fetchAffiliateDashboardData === 'function') {
-            window.Affiliate.fetchAffiliateDashboardData();
-        }
-    }, 100);
-    });
-    };
 };
 
 window.UI.fetchAndRenderFloatingButtons = async function() {
@@ -375,6 +362,25 @@ window.UI.initAvatarButton = function() {
                             avatarDropdown.style.left = (btnRect.left + window.scrollX) + 'px';
                         }
                         
+                        // Populate avatar dropdown header
+                        const profileToUse = window.Auth && window.Auth.cachedProfile ? window.Auth.cachedProfile : {};
+
+                        const userImageElement = avatarDropdown.querySelector('#avatar-dropdown-user-image');
+                        if (userImageElement) {
+                            userImageElement.src = profileToUse.avatar_url || 'logo.png'; // Assumes logo.png is a fallback
+                        }
+
+                        const userNameElement = avatarDropdown.querySelector('#avatar-dropdown-username');
+                        if (userNameElement) {
+                            userNameElement.textContent = profileToUse.name || 'Usuario';
+                        }
+
+                        const userEmailElement = avatarDropdown.querySelector('#avatar-dropdown-user-email');
+                        if (userEmailElement) {
+                            userEmailElement.textContent = profileToUse.email || 'email no disponible';
+                        }
+                        
+                        // Populate the profile card within the dropdown
                         if (window.Auth && Auth.cachedProfile && typeof window.UI.updateDropdownProfileCard === 'function') {
                             window.UI.updateDropdownProfileCard(Auth.cachedProfile);
                         }
@@ -604,6 +610,62 @@ window.UI.showNotification = function(message, type = 'info', duration = 3000) {
             }
         }, 500); 
     }, duration);
+};
+
+window.UI.updateDropdownProfileCard = function(profile) {
+    const defaultAvatar = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
+    const profileData = profile || {}; 
+
+    // Avatar
+    const avatarImg = document.getElementById('dropdown-profile-avatar');
+    if (avatarImg) {
+        const newSrc = profileData.avatar_url || defaultAvatar;
+        avatarImg.src = newSrc;
+    }
+
+    // Nombre
+    const nameEl = document.getElementById('dropdown-profile-name');
+    if (nameEl) {
+        const newName = profileData.name || 'Usuario';
+        nameEl.textContent = newName;
+    }
+
+    // Afiliados
+    const affiliatesEl = document.getElementById('dropdown-profile-affiliates');
+    if (affiliatesEl) {
+        const newAffiliates = profileData.total_referrals_signed_up !== undefined ? profileData.total_referrals_signed_up : '0 (ej)';
+        affiliatesEl.textContent = newAffiliates;
+    }
+
+    // URL de Afiliado
+    const urlEl = document.getElementById('dropdown-profile-url');
+    if (urlEl) {
+        const newUrlHref = profileData.affiliateLink || '#';
+        const newUrlText = profileData.affiliateLink || 'N/A (ej)';
+        urlEl.href = newUrlHref;
+        urlEl.textContent = newUrlText;
+    }
+
+    // Ganancias (Pendientes)
+    const earningsEl = document.getElementById('dropdown-profile-commission'); 
+    if (earningsEl) {
+        let newEarningsText;
+        if (profileData.total_commission_pending !== undefined && profileData.total_commission_pending !== null) { 
+            if (typeof formatCurrency === 'function') {
+                newEarningsText = formatCurrency(profileData.total_commission_pending); 
+            } else {
+                const numericVal = parseFloat(profileData.total_commission_pending);
+                newEarningsText = '$' + (isNaN(numericVal) ? '0.00' : numericVal.toFixed(2)) + ' (ej-fallback)'; 
+            }
+        } else {
+            if (typeof formatCurrency === 'function') {
+                newEarningsText = formatCurrency(0); 
+            } else {
+                newEarningsText = '$0.00 (ej-fallback)';
+            }
+        }
+        earningsEl.textContent = newEarningsText;
+    }
 };
 
 console.log('ui.js loaded with all UI component initializers.');
