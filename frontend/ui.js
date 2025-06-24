@@ -367,7 +367,7 @@ window.UI.initAvatarButton = function() {
 
                         const userImageElement = avatarDropdown.querySelector('#avatar-dropdown-user-image');
                         if (userImageElement) {
-                            userImageElement.src = profileToUse.avatar_url || 'logo.png'; // Assumes logo.png is a fallback
+                            userImageElement.src = profileToUse.avatar_url || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>"; 
                         }
 
                         const userNameElement = avatarDropdown.querySelector('#avatar-dropdown-username');
@@ -613,7 +613,7 @@ window.UI.showNotification = function(message, type = 'info', duration = 3000) {
 };
 
 window.UI.updateDropdownProfileCard = function(profile) {
-    const defaultAvatar = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
+    const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
     const profileData = profile || {}; 
 
     // Avatar
@@ -736,53 +736,51 @@ window.UI.initUserProfileTabs = function() {
 };
 
 window.UI.updateUserProfileSection = function(profile) {
-    const defaultAvatar = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg'; // O tu logo.png
-    const profileData = profile || {}; 
-    // console.log("DEBUG: updateUserProfileSection - received profileData:", JSON.parse(JSON.stringify(profileData)));
+    const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+    const profileData = profile || {};
 
-    // Cabecera de la tarjeta de perfil
+    // Update main profile card header (avatar, name, role/email)
     const avatarImg = document.getElementById('user-profile-main-avatar');
     if (avatarImg) {
         avatarImg.src = profileData.avatar_url || defaultAvatar;
     }
     const nameEl = document.getElementById('user-profile-main-name');
     if (nameEl) {
-        nameEl.textContent = profileData.name || 'Usuario';
+        nameEl.textContent = profileData.name || (typeof i18n !== 'undefined' ? i18n.getTranslation('text_user', 'Usuario') : 'Usuario');
     }
-    const roleEl = document.getElementById('user-profile-main-role'); // Asumiendo que quieres poner el email aquí
+    const roleEl = document.getElementById('user-profile-main-role');
     if (roleEl) {
-        roleEl.textContent = profileData.email || 'email@example.com';
+        roleEl.textContent = profileData.email || (typeof i18n !== 'undefined' ? i18n.getTranslation('text_user_role_default', 'Usuario') : 'Usuario');
     }
 
-    // Pestaña General - Datos de Afiliado
+    // Update "Detalles de Afiliado" tab (tabpanel-affiliate)
     const affiliatesEl = document.getElementById('user-profile-affiliates');
     if (affiliatesEl) {
-        affiliatesEl.textContent = profileData.total_referrals_signed_up !== undefined ? profileData.total_referrals_signed_up : '0'; 
+        affiliatesEl.textContent = profileData.total_referrals_signed_up !== undefined ? String(profileData.total_referrals_signed_up) : '0';
     }
 
     const urlEl = document.getElementById('user-profile-affiliate-url');
     if (urlEl) {
-        urlEl.href = profileData.affiliateLink || '#';
-        urlEl.textContent = profileData.affiliateLink || 'N/A';
+        const affiliateLink = profileData.affiliateLink || '#';
+        urlEl.href = affiliateLink;
+        urlEl.textContent = profileData.affiliateLink || (typeof i18n !== 'undefined' ? i18n.getTranslation('text_not_available_short', 'N/A') : 'N/A');
     }
 
-    const commissionEl = document.getElementById('user-profile-commission'); 
+    const commissionEl = document.getElementById('user-profile-commission');
     if (commissionEl) {
-        if (profileData.total_commission_pending !== undefined && profileData.total_commission_pending !== null) { 
-            if (typeof formatCurrency === 'function') {
-                commissionEl.textContent = formatCurrency(profileData.total_commission_pending); 
-            } else {
-                const numericVal = parseFloat(profileData.total_commission_pending);
-                commissionEl.textContent = '$' + (isNaN(numericVal) ? '0.00' : numericVal.toFixed(2)); 
-            }
+        const pendingCommission = profileData.total_commission_pending !== undefined && profileData.total_commission_pending !== null ? profileData.total_commission_pending : 0;
+        if (typeof formatCurrency === 'function') {
+            commissionEl.textContent = formatCurrency(pendingCommission);
         } else {
-            if (typeof formatCurrency === 'function') {
-                commissionEl.textContent = formatCurrency(0); 
-            } else {
-                commissionEl.textContent = '$0.00';
-            }
+            const numericVal = parseFloat(pendingCommission);
+            commissionEl.textContent = (isNaN(numericVal) ? '0.00' : numericVal.toFixed(2)); 
         }
     }
+    
+    // `UI.initUserProfileTabs` is responsible for the tab switching logic.
+    // This function `updateUserProfileSection` is now only responsible for populating the data
+    // into the correct elements, which are now located in their respective tab panels.
+    console.log('User profile section updated with data targeted to the new tab structure.');
 };
 
 console.log('ui.js loaded with all UI component initializers.');
