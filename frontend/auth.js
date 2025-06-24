@@ -34,7 +34,7 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
     const headerCartButton = document.getElementById('header-cart-button');
     const headerAvatarButton = document.getElementById('header-avatar-button');
     
-    const defaultAvatarUrl = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
+    const defaultAvatarUrl = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
     if (isLoggedIn && profile) {
         if (userAuthSection) userAuthSection.classList.add('hidden'); 
