@@ -116,5 +116,16 @@
     "aria_label_close_auth_modal": "Cerrar ventana de autenticación",
     "title_close_button": "Cerrar",
     "dropdown_avatar_notifications": "Notificaciones",
-    "title_toggle_menu": "Alternar Menú"
+    "title_toggle_menu": "Alternar Menú",
+    "profile_tab_account": "Información de Cuenta",
+    "profile_tab_affiliate": "Detalles de Afiliado",
+    "profile_tab_security": "Seguridad",
+    "profile_tab_sessions": "Sesiones",
+    "profile_account_info_placeholder": "Información general de la cuenta del usuario.",
+    "profile_affiliate_total_referrals_label": "Afiliados:",
+    "profile_affiliate_url_label": "URL de Afiliado:",
+    "profile_affiliate_pending_commission_label": "Ganancia Pendiente:",
+    "text_not_available_short": "N/A",
+    "text_user": "Usuario",
+    "text_user_role_default": "Usuario"
 }
