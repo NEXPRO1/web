@@ -85,11 +85,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (typeof UI.initThemeSwitcher === 'function') {
             UI.initThemeSwitcher(); 
         }
-        if (typeof UI.initSidebarToggle === 'function') { // Added call
+        if (typeof UI.initSidebarToggle === 'function') { 
             UI.initSidebarToggle();
         }
-        if (typeof UI.initCartSummaryDropdown === 'function') { // Added call
+        if (typeof UI.initCartSummaryDropdown === 'function') { 
             UI.initCartSummaryDropdown();
+        }
+        if (typeof UI.initUserProfileTabs === 'function') { 
+            UI.initUserProfileTabs();
+        }
+        if (typeof UI.initAvatarUpload === 'function') { // Added this call
+            UI.initAvatarUpload();
+            console.log('main.js: Avatar upload initialized.');
         }
         console.log('main.js: All core UI components initialized.');
     } else {
