@@ -68,21 +68,31 @@ window.Affiliate = {
                this.statsPendingCommission.textContent = formatCurrency(statsData.total_commission_pending || 0);
                this.statsPaidCommission.textContent = formatCurrency(statsData.total_commission_paid_or_approved || 0);
 
-               // Preparar datos y actualizar la tarjeta de perfil del sidebar
-               // Asumimos que la tarjeta de perfil en el sidebar debe reflejar estos mismos datos de 'stats'
-               // para los campos de afiliados, complementados con el perfil general para nombre/avatar.
-               if (window.UI && typeof window.UI.updateDropdownProfileCard === 'function') {
-                   const cachedProfile = window.Auth && window.Auth.cachedProfile ? window.Auth.cachedProfile : {};
-                   const profileDataForCard = {
-                       name: cachedProfile.name || 'Usuario', 
-                       avatar_url: cachedProfile.avatar_url, // Este DEBE venir de /api/auth/profile via Auth.cachedProfile
-                       affiliateLink: statsData.affiliate_link || cachedProfile.affiliateLink || '', 
-                       total_referrals_signed_up: statsData.total_referrals_signed_up || 0,
-                       total_commission_pending: statsData.total_commission_pending || 0
-                   };
-                   // console.log('Datos para tarjeta de perfil (actualizados desde affiliate.js):', profileDataForCard);
-                   window.UI.updateDropdownProfileCard(profileDataForCard);
-               }
+                   // Update sidebar profile card using UI.updateDropdownProfileCard
+                   if (window.UI && typeof window.UI.updateDropdownProfileCard === 'function') {
+                       const cachedProfile = window.Auth && window.Auth.cachedProfile ? window.Auth.cachedProfile : {};
+                       const profileDataForCard = {
+                           name: cachedProfile.name || 'Usuario', 
+                           avatar_url: cachedProfile.avatar_url, 
+                           affiliateLink: statsData.affiliate_link || (cachedProfile.affiliateLink || ''), 
+                           total_referrals_signed_up: statsData.total_referrals_signed_up !== undefined ? statsData.total_referrals_signed_up : (cachedProfile.total_referrals_signed_up !== undefined ? cachedProfile.total_referrals_signed_up : 0),
+                           total_commission_pending: statsData.total_commission_pending !== undefined ? statsData.total_commission_pending : (cachedProfile.total_commission_pending !== undefined ? cachedProfile.total_commission_pending : 0),
+                           // Include email if UI.updateDropdownProfileCard uses it and it's in cachedProfile
+                           email: cachedProfile.email 
+                       };
+                       // console.log('Datos para tarjeta de perfil del sidebar (actualizados desde affiliate.js con UI.updateDropdownProfileCard):', profileDataForCard); // Mantener comentado o eliminar
+                       window.UI.updateDropdownProfileCard(profileDataForCard);
+                   }
+
+               // La siguiente sección para actualizar la tarjeta de perfil del dropdown ha sido eliminada.
+               // La información de afiliados para la nueva sección de perfil principal (#user-profile)
+               // se actualiza a través de Auth.updateAuthStateUI -> UI.updateUserProfileSection.
+               // Si los datos de 'statsData' necesitan refrescar la sección de perfil principal
+               // (por ejemplo, si se actualizan más frecuentemente que el login),
+               // se debería llamar a UI.updateUserProfileSection(profileConNuevosDatosDeAfiliado) aquí.
+               // Por ahora, se asume que UI.updateUserProfileSection ya tiene acceso a los datos más recientes
+               // a través de Auth.cachedProfile cuando se actualiza.
+
            } else {
                // Si statsData falla, limpiar los campos o mostrar error
                this.affiliateLinkDisplay.textContent = i18n.getTranslation("text_error_loading", "Error loading");
@@ -90,7 +100,6 @@ window.Affiliate = {
                this.statsTotalOrders.textContent = '-';
                this.statsPendingCommission.textContent = '-';
                this.statsPaidCommission.textContent = '-';
-               // También podrías querer limpiar la tarjeta del sidebar o mostrar un error allí si esta fuente es crítica para ella
            }
 
            // Procesar y mostrar lista de referidos
@@ -115,7 +124,6 @@ window.Affiliate = {
            if(this.statsTotalSignups) this.statsTotalSignups.textContent = '-';
            // ... (limpiar otros campos del dashboard) ...
            if(this.affiliateReferralsList) this.affiliateReferralsList.innerHTML = `<p>${i18n.getTranslation("error_loading_referrals", "Error loading referrals.")}</p>`;
-           // Considerar no llamar a updateDropdownProfileCard o llamarlo con datos de error/vacíos
        }
    }
 };
