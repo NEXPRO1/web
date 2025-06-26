@@ -13,7 +13,7 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
     console.log('[Auth] Updating UI based on auth state:', isLoggedIn, 'Profile:', profile);
     this.cachedProfile = isLoggedIn ? profile : null;
 
-    const userAuthSection = document.getElementById('user-auth'); // May not exist anymore
+    const userAuthSection = document.getElementById('user-auth'); 
     const userProfileSection = document.getElementById('user-profile');
     const logoutButton = document.getElementById('logout-button'); 
     const avatarLogoutButton = document.getElementById('avatar-logout-button'); 
@@ -22,23 +22,23 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const avatarAdminPanelLinkContainer = document.getElementById('avatar-admin-panel-link-container');
-    const avatarNotificationsLinkContainer = document.getElementById('avatar-notifications-link-container'); // ADDED
+    const avatarNotificationsLinkContainer = document.getElementById('avatar-notifications-link-container'); 
 
+    // Old profile elements (might be deprecated by new #user-profile section)
     const profileNameEl = document.getElementById('profile-name');
     const profileEmailEl = document.getElementById('profile-email');
     const profileAffiliateIdEl = document.getElementById('profile-affiliate-id');
     const profileAffiliateLinkEl = document.getElementById('profile-affiliate-link');
 
     const headerCreditsButton = document.getElementById('header-credits-button');
-    const headerTasksButton = document.getElementById('header-tasks-button');
     const headerCartButton = document.getElementById('header-cart-button');
     const headerAvatarButton = document.getElementById('header-avatar-button');
     
-    const defaultAvatarUrl = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+    const defaultAvatarUrl = 'https://netfly.s3.sa-east-1.amazonaws.com/u/demo/images/avatar/IM9pP2hNkPUkltS7MxSAazgDeHvcjPf0YqBzngHs.jpg';
 
     if (isLoggedIn && profile) {
         if (userAuthSection) userAuthSection.classList.add('hidden'); 
-        if (userProfileSection) userProfileSection.classList.remove('hidden');
+        if (userProfileSection) userProfileSection.classList.remove('hidden'); // Show the main profile section
         if (logoutButton) logoutButton.classList.remove('hidden');
         if (avatarLogoutButton && avatarLogoutButton.closest('.MuiMenuItem-root')) { 
             avatarLogoutButton.closest('.MuiMenuItem-root').classList.remove('hidden');
@@ -63,11 +63,11 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
                 avatarAdminPanelLinkContainer.classList.add('hidden');
             }
         }
-        // ADDED for avatar notifications link
         if (avatarNotificationsLinkContainer) {
             avatarNotificationsLinkContainer.classList.remove('hidden');
         }
         
+        // Update old profile elements if they exist (for backward compatibility or other UI parts)
         if (profileNameEl) profileNameEl.textContent = profile.name || '';
         if (profileEmailEl) profileEmailEl.textContent = profile.email || '';
         if (profileAffiliateIdEl) profileAffiliateIdEl.textContent = profile.affiliateId || '';
@@ -82,9 +82,17 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         }
 
         if (headerCreditsButton) headerCreditsButton.classList.remove('hidden');
-        // if (headerTasksButton) headerTasksButton.classList.remove('hidden'); // Already removed from HTML
         if (headerCartButton) headerCartButton.classList.remove('hidden'); 
         if (headerAvatarButton) headerAvatarButton.classList.remove('hidden');
+
+        // Call to update the new main user profile section
+        if (window.UI && typeof window.UI.updateUserProfileSection === 'function') {
+            UI.updateUserProfileSection(profile);
+        }
+        // Call to update the sidebar profile card
+        if (window.UI && typeof window.UI.updateDropdownProfileCard === 'function') {
+            UI.updateDropdownProfileCard(profile);
+        }
 
         if (window.Checkout && typeof Checkout.updateCheckoutFormForAuthState === 'function') {
             Checkout.updateCheckoutFormForAuthState(true, profile);
@@ -96,7 +104,7 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
     } else { // Not logged in
         this.cachedProfile = null;
         if (userAuthSection) userAuthSection.classList.remove('hidden'); 
-        if (userProfileSection) userProfileSection.classList.add('hidden');
+        if (userProfileSection) userProfileSection.classList.add('hidden'); // Hide the main profile section
         if (logoutButton) logoutButton.classList.add('hidden');
         if (avatarLogoutButton && avatarLogoutButton.closest('.MuiMenuItem-root')) {
             avatarLogoutButton.closest('.MuiMenuItem-root').classList.add('hidden');
@@ -109,7 +117,6 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         if (avatarAdminPanelLinkContainer) {
             avatarAdminPanelLinkContainer.classList.add('hidden');
         }
-        // ADDED for avatar notifications link
         if (avatarNotificationsLinkContainer) {
             avatarNotificationsLinkContainer.classList.add('hidden');
         }
@@ -118,6 +125,7 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         if (sidebarToggle) sidebarToggle.classList.add('hidden');
         document.body.classList.remove('sidebar-content-shifted');
 
+        // Clear old profile elements
         if (profileNameEl) profileNameEl.textContent = '';
         if (profileEmailEl) profileEmailEl.textContent = '';
         if (profileAffiliateIdEl) profileAffiliateIdEl.textContent = '';
@@ -132,11 +140,18 @@ Auth.updateAuthStateUI = function(isLoggedIn, profile = null) {
         }
 
         if (headerCreditsButton) headerCreditsButton.classList.add('hidden');
-        // if (headerTasksButton) headerTasksButton.classList.add('hidden'); // Already removed from HTML
         if (headerAvatarButton) headerAvatarButton.classList.remove('hidden'); 
 
         if (window.Checkout && typeof Checkout.updateCheckoutFormForAuthState === 'function') {
             Checkout.updateCheckoutFormForAuthState(false, null);
+        }
+        // Update the new main user profile section to show default/empty state
+        if (window.UI && typeof window.UI.updateUserProfileSection === 'function') {
+            UI.updateUserProfileSection(null);
+        }
+        // Update the sidebar profile card to show default/empty state
+        if (window.UI && typeof window.UI.updateDropdownProfileCard === 'function') {
+            UI.updateDropdownProfileCard(null);
         }
     }
     console.log('[Auth] UI update for auth state complete.');
