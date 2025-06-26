@@ -22,6 +22,9 @@
     --text-light-rgb: 224, 224, 224; /* For rgba hover effects */
 
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --amber-accent: #FFBF00;
+    --sidebar-card-bg-dark: #050505;
+    --sidebar-card-bg-light: #dcdcdc;
 }
 
 /* --- Global Body Styles --- */
@@ -266,7 +269,7 @@ section h2 {
 
 /* Card-like sections */
 #user-auth form, 
-#user-profile, 
+/* #user-profile, */ /* Comentado para que no aplique estos estilos a la nueva tarjeta */
 #affiliate-dashboard,
 #cart,
 #checkout,
@@ -279,7 +282,7 @@ section h2 {
     box-shadow: 0 4px 12px rgba(var(--box-shadow-color-rgb, 0,0,0),0.25); /* Adjusted for theme */
 }
 #user-auth h2, 
-#user-profile h2, 
+/* #user-profile h2, */ /* Comentado para que no aplique estos estilos a la nueva tarjeta */
 #affiliate-dashboard h2, 
 #cart h2, 
 #checkout h2,
@@ -476,11 +479,13 @@ form button[type="submit"] {
 }
 
 /* --- User Profile & Affiliate Dashboard --- */
-#user-profile p, #affiliate-dashboard p {
+/* #user-profile p, */ /* Comentado para que no aplique estos estilos a la nueva tarjeta */
+#affiliate-dashboard p {
     color: var(--text-muted);
     line-height: 1.7; 
 }
-#user-profile strong, #affiliate-dashboard strong {
+/* #user-profile strong, */ /* Comentado para que no aplique estos estilos a la nueva tarjeta */
+#affiliate-dashboard strong {
     color: var(--text-light);
     font-weight: 500;
 }
@@ -598,7 +603,8 @@ body#admin-page header {
     background-color: var(--sidebar-bg);  /* Use theme variable */
     border-right: 1px solid var(--border-gray);
     box-shadow: 3px 0 8px rgba(var(--box-shadow-color-rgb,0,0,0),0.2); /* Adjusted for theme */
-    padding-top: 20px;
+    padding-top: 20px; /* Reduced from 60px to make space for potential header elements in sidebar */
+    box-sizing: border-box; /* Include padding in width/height calculation */
     overflow-y: auto;
     z-index: 1000;
     transform: translateX(0); 
@@ -1238,156 +1244,244 @@ img#main-prin-image {
     opacity: 1 !important;
     visibility: visible !important;
 }
-/* Perfil cuadrado en el sidebar: marco y sombra amarillos, textos centrados */
-#dropdown-profile-card.profile-card {
-    border: 3px solid #FFD600; /* Amarillo fuerte */
-    box-shadow: 0 0 18px 2px #FFD60088;
-    background: var(--dark-bg2, #222);
-    border-radius: 14px;
-    padding: 18px 12px 12px 12px;
-    margin-bottom: 16px;
-    width: 100%;
-    max-width: 260px;
-    box-sizing: border-box;
-    text-align: center;
+
+/* Estilos para la Nueva Sección de Perfil de Usuario */
+#user-profile { /* La sección que contiene la tarjeta */
+    background-color: var(--dark-bg1); /* Fondo de la sección, si es diferente de la tarjeta */
+    padding: 20px; /* Espaciado alrededor de la tarjeta */
+    border: none; /* Quitar el borde de la sección si la tarjeta ya tiene el suyo */
+    box-shadow: none; /* Quitar la sombra de la sección si la tarjeta ya tiene la suya */
 }
 
-#dropdown-profile-card .profile-avatar {
-    width: 72px;
-    height: 72px;
+#user-profile .MuiCard-root { /* Contenedor principal de la tarjeta de perfil */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--dark-bg2, #1E1E1E);
     border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    padding: 0; /* El padding se maneja en sub-elementos */
+    margin: 0 auto; /* Centrar la tarjeta dentro de la sección #user-profile */
+    width: 100%;
+    max-width: 700px; /* Un ancho máximo para la tarjeta */
+    box-sizing: border-box;
+    position: relative;
+}
+
+#user-profile .bg-profile-content { /* Contenedor para el fondo degradado/imagen de cabecera */
+    background-image: linear-gradient(to top, #C13584, #FFBF00, #32CD32, #00BFFF);
+    width: 100%; /* Asegurar que ocupe todo el ancho de la tarjeta */
+    border-top-left-radius: 12px; /* Heredado o igual al de MuiCard-root */
+    border-top-right-radius: 12px; /* Heredado o igual al de MuiCard-root */
+}
+
+#user-profile .bg-profile { /* Contenedor de avatar y nombre/rol, dentro de .bg-profile-content */
+    padding: 24px 12px 18px 12px; /* Ajustado padding */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width: 100%; 
+    box-sizing: border-box;
+}
+
+#user-profile .border-avatar { /* Contenedor de la imagen del avatar */
+    width: 80px; /* Aumentado tamaño */
+    height: 80px;
+    border-radius: 50%; /* Hacerlo circular */
     overflow: hidden;
-    margin: 0 auto 10px auto;
-    background: #444;
+    margin-bottom: 12px; /* Ajustado margen */
+    background: #444; 
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative; /* Para el botón de upload */
+    border: 3px solid var(--dark-bg1); /* Borde para destacar */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-#dropdown-profile-card .profile-avatar img {
+#user-profile .avatar-image { /* La imagen del avatar en sí */
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 12px;
+}
+
+#user-profile .upload-img { 
+    position: absolute;
+    bottom: -5px; /* Ajustado para que se solape un poco con el borde */
+    right: -5px;  
+    transform: scale(0.9); /* Ajustado escala */
+    /* Estilos de MuiButton se heredan, pueden necesitar ajustes específicos si se sobreescriben mucho */
+    background-color: var(--accent-blue); /* Fondo para el botón */
+    color: white;
+    border-radius: 50%; /* Hacer el botón circular */
+    min-width: auto; /* Permitir que sea más pequeño */
+    width: 36px;
+    height: 36px;
+    padding: 6px; /* Ajustar padding interno */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+#user-profile .upload-img:hover {
+    background-color: var(--accent-blue-darker);
+}
+#user-profile .upload-img .MuiButton-startIcon {
+    margin: 0; /* Centrar el icono si es el único contenido */
+}
+#user-profile .upload-img svg {
+    font-size: 18px; /* Tamaño del icono */
+}
+
+
+#user-profile .name-user {
+    width: 100%; /* Ensure it takes full width if not already set */
+    text-align: center;
+    /* Keep any existing styles for .name-user */
+}
+
+#user-profile .name-user h2 { /* Nombre (ID: user-profile-main-name) */
+    font-weight: 600; /* Un poco más de peso */
+    font-size: 1.5em; /* Más grande */
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 4px; 
+    color: var(--text-light, #E0E0E0);
+    border-bottom: none; 
+    padding-bottom: 0;
+}
+#user-profile .name-user p { /* Rol/Email (ID: user-profile-main-role) */
+    font-size: 0.95em; /* Un poco más grande */
+    color: var(--text-muted, #A0A0A0);
+    margin-bottom: 10px; 
+}
+
+#user-profile .card-actions { /* Contenedor de las pestañas MuiTabs-root */
+    border-top: 1px solid var(--border-gray);
+    width: 100%;
+    padding: 0; /* El padding lo maneja MuiTabs-root o los paneles */
+}
+
+#user-profile .MuiTabs-root {
+    /* Ajustes a MuiTabs-root si es necesario, ej. asegurar ancho completo */
+    min-height: 48px; /* Altura estándar de pestañas */
+}
+#user-profile .MuiTab-root {
+    text-transform: none; 
+    font-size: 0.9rem;
+    font-weight: 500; /* Peso para pestañas */
+    min-width: 0; /* Permitir que las pestañas se ajusten a su contenido */
+    flex-grow: 1; /* Para que ocupen el espacio disponible */
+    padding: 12px 16px; /* Padding de pestañas */
+}
+#user-profile .MuiTab-root.Mui-selected {
+    color: var(--accent-blue); /* Color de pestaña seleccionada */
+}
+#user-profile .MuiTabs-indicator {
+    background-color: var(--accent-blue); /* Color del indicador */
+    height: 3px; /* Grosor del indicador */
+}
+
+
+/* Estilos para los paneles de pestañas y su contenido */
+#user-profile [role="tabpanel"] { 
+    width: 100%;
+    padding: 20px; /* Padding para el contenido de la pestaña */
+    box-sizing: border-box;
+    background-color: var(--dark-bg1); /* Fondo para el panel de pestaña, si es diferente de la tarjeta */
+    border-bottom-left-radius: 12px; /* Redondear si la tarjeta está redondeada */
+    border-bottom-right-radius: 12px;
+}
+#user-profile [role="tabpanel"].hidden {
+    display: none !important;
+}
+
+#user-profile [role="tabpanel"] p {
+    font-size: 0.95em;
+    color: var(--text-muted, #A0A0A0);
+    margin-bottom: 10px; 
+    line-height: 1.6;
+    word-break: break-word; /* Cambiado de break-all para mejor legibilidad */
+}
+#user-profile [role="tabpanel"] p strong { 
+    color: var(--text-light); 
+    margin-right: 8px; /* Aumentado margen */
+    font-weight: 500;
+}
+
+#user-profile #user-profile-affiliate-url { 
+    color: var(--accent-blue, #3B82F6);
+    text-decoration: none; /* Quitar subrayado por defecto */
+    font-weight: 500;
+}
+#user-profile #user-profile-affiliate-url:hover {
+    text-decoration: underline; /* Subrayado en hover */
+}
+
+/* Styles for Sidebar Profile Card */
+#dropdown-profile-card {
+    background-color: var(--sidebar-card-bg-dark); /* Or transparent if sidebar bg is preferred */
+    padding: 15px;
+    border-radius: 6px; /* Optional: if you want rounded corners for the card */
+    /* margin: 16px 0; /* This is already an inline style on the element, consider moving it here */
+    text-align: center; /* Center avatar and text block */
+    border-bottom: 1px solid var(--border-gray); /* Separator from sidebar links */
+}
+
+#dropdown-profile-card .profile-avatar {
+    margin-bottom: 10px;
+}
+
+#dropdown-profile-card #dropdown-profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--amber-accent);
+    margin-left: auto; /* For centering if text-align: center on parent isn't enough */
+    margin-right: auto; /* For centering */
+    display: block; /* Ensure it behaves as a block for margin auto to work */
 }
 
 #dropdown-profile-card .profile-info {
-    width: 100%;
-    text-align: center;
+    /* text-align: left; /* Uncomment if you prefer left-aligned text under a centered avatar */
 }
 
-#dropdown-profile-card .profile-name {
-    font-weight: bold;
+#dropdown-profile-card #dropdown-profile-name {
     font-size: 1.1em;
-    margin-bottom: 6px;
-    color: var(--text-light, #fff);
-    text-align: center;
+    font-weight: 600;
+    color: var(--amber-accent);
+    margin-bottom: 8px;
 }
 
 #dropdown-profile-card .profile-affiliates,
 #dropdown-profile-card .profile-affiliate-url,
 #dropdown-profile-card .profile-commission {
-    font-size: 0.95em;
-    color: var(--text-muted, #aaa);
-    margin-bottom: 4px;
-    word-break: break-all;
-    text-align: center;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+#dropdown-profile-card .profile-affiliates span:first-child,
+#dropdown-profile-card .profile-affiliate-url span:first-child,
+#dropdown-profile-card .profile-commission span:first-child {
+    color: var(--text-muted);
+    margin-right: 5px;
+}
+
+#dropdown-profile-card .profile-affiliates span:last-child,
+#dropdown-profile-card .profile-affiliate-url a,
+#dropdown-profile-card .profile-commission span:last-child {
+    color: var(--text-light);
+    font-weight: 500;
 }
 
 #dropdown-profile-card .profile-affiliate-url a {
-    color: var(--accent-blue, #3B82F6);
+    color: var(--accent-blue);
+    text-decoration: none;
+    word-break: break-all;
+}
+
+#dropdown-profile-card .profile-affiliate-url a:hover {
     text-decoration: underline;
-    font-size: 0.95em;
-    text-align: center;
 }
 
-/* NUEVOS ESTILOS PARA LA CABECERA DEL PERFIL DE USUARIO */
-/* Aplicado al div que tiene la clase .bg-profile dentro de #user-profile */
-#user-profile .bg-profile {
-    -webkit-font-smoothing: antialiased;
-    text-size-adjust: 100%;
-    font-weight: 400; 
-    font-size: 1rem; /* Ajustado para que sea un tamaño base más estándar */
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
-    font-family: 'Poppins', var(--font-sans); /* Poppins como preferida, luego fallback del sistema */
-    margin: 0;
-    padding: 20px; 
-    box-sizing: border-box;
-    color: #fff; 
-    background: linear-gradient(rgba(0,100,131,0.7215686275), rgba(66,0,58,0.4705882353)) center center / cover no-repeat;
-    height: 250px; 
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    position: relative;
-    /* Hereda el border-radius del contenedor .MuiPaper-root si este lo tiene.
-       Si .MuiPaper-root no tiene border-radius o es diferente, definirlo aquí.
-       Por ejemplo: border-top-left-radius: 8px; border-top-right-radius: 8px; 
-       si .MuiPaper-root tiene un border-radius de 8px y este es el primer hijo. */
-}
-
-#user-profile .bg-profile-content {
-    /* Este div envuelve .bg-profile. Asegurarse de que no tenga paddings/margins que interfieran. */
-    /* Si .MuiPaper-root es el que tiene el `border-radius` y `overflow:hidden`,
-       entonces .bg-profile (si es hijo directo) se recortará bien.
-       Si bg-profile-content es el hijo directo con `overflow:hidden`, entonces
-       .bg-profile debe tener el `border-radius` o heredarlo. */
-    padding: 0;
-    margin: 0;
-}
-
-
-/* Estilos para el contenedor del avatar y el botón de carga */
-#user-profile .border-avatar { /* Cambiado de .bg-profile .border-avatar para mayor especificidad */
-    margin-bottom: 15px; 
-    position: relative; 
-    display: flex; 
-    flex-direction: column;
-    align-items: center;
-}
-
-#user-profile .avatar-image { /* Cambiado de .bg-profile .avatar-image */
-    width: 100px; 
-    height: 100px;
-    border-radius: 50%; 
-    object-fit: cover; 
-    border: 3px solid rgba(255,255,255,0.7); /* Borde más visible */
-    margin-bottom: 10px; 
-    background-color: rgba(255,255,255,0.1); /* Fondo ligero si el SVG es transparente o tarda en cargar */
-}
-
-/* Estilos para el botón de "Importar" imagen */
-#user-profile .upload-img { /* Cambiado de .bg-profile .upload-img */
-    /* Los estilos MUI ya le dan apariencia de botón. Se pueden ajustar aquí si es necesario. */
-    font-size: 0.8rem;
-    padding: 4px 8px;
-    color: #fff; /* Asegurar que el texto sea visible */
-    border-color: rgba(255,255,255,0.5); /* Borde más visible */
-}
-#user-profile .upload-img:hover {
-    background-color: rgba(255,255,255,0.1);
-    border-color: #fff;
-}
-
-
-/* Estilos para el nombre y rol del usuario */
-#user-profile .name-user { /* Cambiado de .bg-profile .name-user */
-    text-align: center;
-}
-
-#user-profile .name-user h2#user-profile-main-name { /* Más específico */
-    color: #fff;
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 1.75rem; 
-    font-weight: 600;
-    border-bottom: none; 
-}
-
-#user-profile .name-user p#user-profile-main-role { /* Más específico */
-    color: rgba(255, 255, 255, 0.9); 
-    font-size: 1rem;
-    margin: 0;
+body.light-theme #dropdown-profile-card {
+    background-color: var(--sidebar-card-bg-light);
 }
